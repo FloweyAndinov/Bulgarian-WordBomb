@@ -1,0 +1,43 @@
+
+import { useEffect, useState } from 'react';
+import styles from './Home.module.scss'
+import Create from '../Create/Create';
+import Join from '../Join/Join';
+import { Socket } from 'socket.io-client';
+
+interface Props {
+    socket: Socket;
+}
+
+function Home( {socket}: Props) {
+
+    const [showJoin, setShowJoin] = useState(false);
+    const [showCreate, setShowCreate] = useState(false);
+    
+    useEffect(() => {
+        socket.on('connect', () => {
+        console.log(socket.id);
+        });
+    }, [socket]);
+
+    if (showJoin) {
+        return <Join />;
+    }
+
+    if (showCreate) {
+        return <Create/>
+    }
+  return (
+    <>
+    <div className={styles.title}>
+        WordBomb на български
+    </div>
+    <div className={styles.actionButtons}>
+        <button onClick={() => setShowCreate(true)}>Create</button>
+        <button onClick={() => setShowJoin(true)}>Join</button>
+    </div>
+    </>
+  )
+}
+
+export default Home

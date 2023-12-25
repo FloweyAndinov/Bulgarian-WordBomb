@@ -1,0 +1,31 @@
+@import '../../variables';
+
+.title {
+    font-size: 4rem;
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.actionButtons {
+    display: flex;
+    margin: 0 auto;
+    justify-content: space-around;
+    margin-top: 10rem;
+    width: 90%;
+}
+
+.actionButtons button {
+    padding: 1rem 2rem;
+    background-color: $primary-color;
+    color: $secondary-color;
+    font-weight: bolder;
+    font-size: 4vmin;
+    border: 3px solid $secondary-color;
+    cursor:pointer;
+}
+
+.actionButtons button:hover {
+    background-color: $secondary-color;
+    color: $primary-color;
+    border: 3px solid $success-color;
+}

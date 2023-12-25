@@ -1,0 +1,25 @@
+@import '../../variables';
+
+.title {
+    font-size: 4rem;
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.gamesList {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 2rem;
+}
+
+.gamesList button {
+    list-style-type: none;
+    margin-bottom: 1rem; // Adjust this value as needed
+    padding: 1rem 2rem;
+    background-color: $primary-color;
+    color: $secondary-color;
+    font-weight: bolder;
+    font-size: 4vmin;
+    cursor:pointer;
+}
