@@ -16,7 +16,7 @@ function Home( {socket}: Props) {
     
     useEffect(() => {
         socket.on('connect', () => {
-        console.log(socket.id);
+        // console.log(socket.id);
         });
     }, [socket]);
 
@@ -25,7 +25,7 @@ function Home( {socket}: Props) {
     }
 
     if (showCreate) {
-        return <Create/>
+        return <Create socket={socket} isOwner={true}/>
     }
   return (
     <>

@@ -20,6 +20,27 @@ io.on('connection', (socket) => {
 
         socket.emit('rooms', Array.from(rooms));
     });
+
+    socket.on('create-room', (room) => {
+        socket.join(room);
+    });
+
+    socket.on('join-room', (room) => {
+        socket.join(room);
+        socket.emit('joined-room', room);
+    });
+
+    socket.on('leave-room', (room) => {
+        socket.leave(room);
+    });
+
+    socket.on('get-ids' , (roomID) => {
+        const room = io.sockets.adapter.rooms.get(roomID);
+        const ids = Array.from(room);
+        socket.emit('ids', ids);
+    });
+
+   
 });
 
 setInterval(() => {
