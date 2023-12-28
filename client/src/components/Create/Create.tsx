@@ -5,8 +5,9 @@ import Game from '../Game/Game';
 interface Props {
     socket: Socket;
     isOwner: boolean;
+    roomIDProp?: string;
 }
-function Create( {socket , isOwner}: Props) {
+function Create( {socket , isOwner, roomIDProp ='errorroomID'}: Props) {
     const [roomID, setRoomID] = useState<string>('');
     const [ids, setIds] = useState<string[]>([]);
     const [startGame, setStartGame] = useState<boolean>(false);
@@ -17,20 +18,22 @@ function Create( {socket , isOwner}: Props) {
         const id = socket.id.slice(-6);
         setRoomID(id);
         socket.emit('create-room', id);
-        console.log("user created room" )
-        
+        // console.log("user created room" , id);
        }
        else {
-        console.log("user joined room")
-        socket.emit('joined-room');
+        setRoomID(roomIDProp);
+        socket.emit('join-room', roomIDProp);
        }
-       function handleJoinOrLeave (roomID: string) {
-        console.log("get the ids")
-          getIds(roomID);
-      };
-  
-      socket.on('join-room', handleJoinOrLeave);
-      socket.on('leave-room', handleJoinOrLeave);
+
+      socket.on('user-connected', (room) => {
+        console.log("get the user ids", room);
+        getIds(room);
+      })
+
+
+
+
+
       socket.on('start-game', () => {
         setStartGame(true);
       });
@@ -45,6 +48,7 @@ function Create( {socket , isOwner}: Props) {
         socket.emit('get-ids', roomID);
         socket.on('ids', (ids) => {
             console.log(ids);
+            setIds(ids);
           });
     }
   return (
@@ -55,7 +59,7 @@ function Create( {socket , isOwner}: Props) {
     <div>{roomID}</div>
     <ul>
         {ids.map((id, index) => (
-            <li key={index}>{id}</li>
+            <li key={index}>{id} {id===socket.id? <span>(Ти)</span> : <></>}</li>
         ))}
     </ul>
     {isOwner ? <button onClick={() => socket.emit('start-game', roomID)}>Start Game</button> : <></>}

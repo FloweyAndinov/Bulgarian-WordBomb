@@ -8,7 +8,7 @@ function Join() {
   const [rooms, setRooms] = React.useState<Map<string, Set<string>>>(new Map());
   const [joinedRoom, setJoinedRoom] = React.useState<boolean>(false);
     const counter = useRef(0);
-
+  const [roomID, setRoomID] = React.useState<string>('');
 
     useEffect(() => {
         socket.emit('get-rooms');
@@ -18,20 +18,19 @@ function Join() {
           });
         counter.current++;
         console.log(counter.current);
-        socket.on('joined-room', (roomID: string) => {
-          console.log("user joined room" + roomID)
-          socket.emit('get-rooms');
+        socket.on('joined-room-window', (roomID) => {
           setJoinedRoom(true); 
+          setRoomID(roomID);
           });
         }, []);
 
         function JoinRoom (roomID: string) {
-            socket.emit('join-room', roomID);
+            socket.emit('join-room-window', roomID);
          
         }
   return (
     <>
-    {joinedRoom ? <Create socket={socket} isOwner={false}/> :
+    {joinedRoom ? <Create socket={socket} isOwner={false} roomIDProp={roomID}/> :
       <div>
             <h1 className={styles.title}>Join a Game</h1>
             <div className={styles.gamesList}>

@@ -7,27 +7,30 @@ const io = require('socket.io')(3000, {
         methods : ['GET', 'POST'],
     }
 });
-let counter = 0;
 io.on('connection', (socket) => {
     console.log(socket.id);
 
     socket.on('get-rooms', () => {
         const rooms = io.sockets.adapter.rooms;
-        console.log(rooms);    
-        console.log(rooms.size);
-        console.log(counter);
-        counter++;
+        console.log(rooms);
 
         socket.emit('rooms', Array.from(rooms));
     });
 
     socket.on('create-room', (room) => {
         socket.join(room);
+        io.in(room).emit('user-connected', room);
+    });
+
+    socket.on('join-room-window', (room) => {
+        socket.join(room);
+        socket.emit('joined-room-window', room);
     });
 
     socket.on('join-room', (room) => {
-        socket.join(room);
-        io.to(room).emit('joined-room');
+        //find the room that called this function
+        console.log(room);
+        io.in(room).emit('user-connected', room);
     });
 
     socket.on('leave-room', (room) => {
