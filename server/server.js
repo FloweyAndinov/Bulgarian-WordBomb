@@ -27,7 +27,7 @@ io.on('connection', (socket) => {
 
     socket.on('join-room', (room) => {
         socket.join(room);
-        socket.emit('joined-room', room);
+        io.to(room).emit('joined-room');
     });
 
     socket.on('leave-room', (room) => {
@@ -39,7 +39,9 @@ io.on('connection', (socket) => {
         const ids = Array.from(room);
         socket.emit('ids', ids);
     });
-
+    socket.on('start-game', (roomID) => {
+        io.to(roomID).emit('start-game');
+    });
    
 });
 

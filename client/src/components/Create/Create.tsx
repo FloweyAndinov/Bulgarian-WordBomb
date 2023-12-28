@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import {Socket, io} from 'socket.io-client'
+import Game from '../Game/Game';
 
 interface Props {
     socket: Socket;
@@ -8,6 +9,7 @@ interface Props {
 function Create( {socket , isOwner}: Props) {
     const [roomID, setRoomID] = useState<string>('');
     const [ids, setIds] = useState<string[]>([]);
+    const [startGame, setStartGame] = useState<boolean>(false);
 
     useEffect(() => {
        if (isOwner) {
@@ -15,33 +17,40 @@ function Create( {socket , isOwner}: Props) {
         const id = socket.id.slice(-6);
         setRoomID(id);
         socket.emit('create-room', id);
-        console.log("user joined room" )
+        console.log("user created room" )
         
        }
        else {
-        socket.emit('join-room', roomID);
+        console.log("user joined room")
+        socket.emit('joined-room');
        }
-        const handleJoinOrLeave = (roomID: string) => {
+       function handleJoinOrLeave (roomID: string) {
+        console.log("get the ids")
           getIds(roomID);
       };
   
       socket.on('join-room', handleJoinOrLeave);
       socket.on('leave-room', handleJoinOrLeave);
+      socket.on('start-game', () => {
+        setStartGame(true);
+      });
 
-      return () => {
-        socket.off('join-room', handleJoinOrLeave);
-        socket.off('leave-room', handleJoinOrLeave);
-    };
+    //   return () => {
+    //     socket.off('join-room', handleJoinOrLeave);
+    //     socket.off('leave-room', handleJoinOrLeave);
+    // };
     }, []);
 
     function getIds (roomID: string) {
         socket.emit('get-ids', roomID);
         socket.on('ids', (ids) => {
-            setIds(ids);
+            console.log(ids);
           });
     }
   return (
     <>
+    {startGame ? <Game/> : 
+    <div>
     <div>Create</div>
     <div>{roomID}</div>
     <ul>
@@ -49,6 +58,9 @@ function Create( {socket , isOwner}: Props) {
             <li key={index}>{id}</li>
         ))}
     </ul>
+    {isOwner ? <button onClick={() => socket.emit('start-game', roomID)}>Start Game</button> : <></>}
+    </div>
+}
     </>
   )
 }
