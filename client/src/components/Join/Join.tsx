@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react'
 import styles from './Join.module.scss'
 import {Socket, io} from 'socket.io-client'
 import {socket} from '../../socket'
-import Create from '../Create/Create';
+import Create from '../Lobby/Lobby';
 
 function Join() {
   const [rooms, setRooms] = React.useState<Map<string, Set<string>>>(new Map());

@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from 'react';
 import styles from './Home.module.scss'
-import Create from '../Create/Create';
+import Lobby from '../Lobby/Lobby';
 import Join from '../Join/Join';
 import { Socket } from 'socket.io-client';
 
@@ -25,7 +25,7 @@ function Home( {socket}: Props) {
     }
 
     if (showCreate) {
-        return <Create socket={socket} isOwner={true}/>
+        return <Lobby socket={socket} isOwner={true}/>
     }
   return (
     <>

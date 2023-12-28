@@ -7,7 +7,7 @@ interface Props {
     isOwner: boolean;
     roomIDProp?: string;
 }
-function Create( {socket , isOwner, roomIDProp ='errorroomID'}: Props) {
+function Lobby( {socket , isOwner, roomIDProp ='errorroomID'}: Props) {
     const [roomID, setRoomID] = useState<string>('');
     const [ids, setIds] = useState<string[]>([]);
     const [startGame, setStartGame] = useState<boolean>(false);
@@ -69,4 +69,4 @@ function Create( {socket , isOwner, roomIDProp ='errorroomID'}: Props) {
   )
 }
 
-export default Create
+export default Lobby
