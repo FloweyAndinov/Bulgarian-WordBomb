@@ -42,10 +42,20 @@ io.on('connection', (socket) => {
         const ids = Array.from(room);
         socket.emit('ids', ids);
     });
-    socket.on('start-game', (roomID) => {
-        io.to(roomID).emit('start-game');
+    socket.on('send-game-screen', (roomID) => {
+        //send everyone to game screen
+        io.to(roomID).emit('send-game-screen');
     });
+
+    socket.on('start-game', () => {
+        //get all ids
+        //randomize order (optional)
+        //game: cycle ids, force current id to type word, others to wait
+    })
+    
    
+
+    socket
 });
 
 setInterval(() => {

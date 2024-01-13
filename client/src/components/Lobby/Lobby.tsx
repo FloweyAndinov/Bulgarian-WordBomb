@@ -34,7 +34,7 @@ function Lobby( {socket , isOwner, roomIDProp ='errorroomID'}: Props) {
 
 
 
-      socket.on('start-game', () => {
+      socket.on('send-game-screen', () => {
         setStartGame(true);
       });
 
@@ -62,7 +62,7 @@ function Lobby( {socket , isOwner, roomIDProp ='errorroomID'}: Props) {
             <li key={index}>{id} {id===socket.id? <span>(Ти)</span> : <></>}</li>
         ))}
     </ul>
-    {isOwner ? <button onClick={() => socket.emit('start-game', roomID)}>Start Game</button> : <></>}
+    {isOwner ? <button onClick={() => socket.emit('send-game-screen', roomID)}>Start Game</button> : <></>}
     </div>
 }
     </>
