@@ -1,12 +1,44 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
+const fs = require('fs');
+const csv = require('csv-parser');
+const path = require('path');
+
+
 const io = require('socket.io')(3000, {
     cors: {
         origin: ['http://localhost:5173'],
         methods : ['GET', 'POST'],
     }
 });
+const filePath = 'words.csv';
+
+let syllables = [];
+
+const stream = fs.createReadStream(filePath, { encoding: 'utf-8' })
+
+stream.on('error', (error) => {
+    console.error('Error opening the file:', error);
+});
+
+// Handle 'open' event
+stream.on('open', () => {
+    // console.log('File found. Reading data...');
+
+    // Pipe the stream to the CSV parser
+    stream.pipe(csv())
+        .on('data', (data) => {
+            syllables.push(Object.values(data)[0]);
+        })
+        .on('end', () => {
+            console.log('CSV data loaded:', syllables);
+        })
+        .on('error', (error) => {
+            console.error('Error parsing CSV:', error);
+        });
+});
+
 io.on('connection', (socket) => {
     console.log(socket.id);
 
@@ -55,10 +87,13 @@ io.on('connection', (socket) => {
     
    
 
-    socket.on('send-word', (word) => {
+    socket.on('send-word', (user_word) => {
         //check the word
         //check if game ended (has 1 person remaining)
         //pass the turn to next person
+
+        // const word = user_word.toLowerCase()
+        // const containsBool = syllables.some(syllable => word.includes(syllable))
     })
 });
 
