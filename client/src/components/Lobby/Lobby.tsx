@@ -53,7 +53,7 @@ function Lobby( {socket , isOwner, roomIDProp ='errorroomID'}: Props) {
     }
   return (
     <>
-    {startGame ? <Game/> : 
+    {startGame ? <Game socket={socket} isOwner={isOwner} roomIDProp={roomIDProp}/> : 
     <div>
     <div>Create</div>
     <div>{roomID}</div>

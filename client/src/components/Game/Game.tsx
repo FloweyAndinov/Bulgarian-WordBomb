@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import { Socket } from 'socket.io-client';
+import WordSection from '../WordSection/WordSection';
 
 interface Props {
   socket: Socket;
@@ -20,8 +21,10 @@ function Game({socket , isOwner, roomIDProp} : Props) {
 
   }, [])
   return (
+    <>
     <div>Game</div>
-
+    <WordSection enabled={false}/>
+    </>
 
   )
 }

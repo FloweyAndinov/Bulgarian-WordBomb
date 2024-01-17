@@ -55,7 +55,11 @@ io.on('connection', (socket) => {
     
    
 
-    socket
+    socket.on('send-word', (word) => {
+        //check the word
+        //check if game ended (has 1 person remaining)
+        //pass the turn to next person
+    })
 });
 
 setInterval(() => {
