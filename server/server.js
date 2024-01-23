@@ -16,6 +16,12 @@ const filePath = 'words.csv';
 
 let syllables = [];
 
+let turnsMap = {};
+
+let aliveMap = {};
+
+const deadString = '______' //this replaces id when player dies
+
 const stream = fs.createReadStream(filePath, { encoding: 'utf-8' })
 
 stream.on('error', (error) => {
@@ -45,7 +51,7 @@ io.on('connection', (socket) => {
 
     socket.on('get-rooms', () => {
         const rooms = io.sockets.adapter.rooms;
-        console.log(rooms);
+        // console.log(rooms);
 
         socket.emit('rooms', Array.from(rooms));
     });
@@ -80,10 +86,14 @@ io.on('connection', (socket) => {
         io.to(roomID).emit('send-game-screen');
     });
 
-    socket.on('start-game', () => {
-        //get all ids
+    socket.on('start-game', (roomID) => {
+        const room = io.sockets.adapter.rooms.get(roomID);
+        const ids = Array.from(room);
         //randomize order (optional)
         //game: cycle ids, force current id to type word, others to wait
+        const aliveArray = Array.from(room);
+        ResetAlive(roomID, aliveArray)
+        
     })
     
    
@@ -143,5 +153,27 @@ function debugUserCount() {
     const connectedSockets = io.sockets.sockets.size;
     console.log(`Number of connected sockets: ${connectedSockets}`);
 }
+
+function UpdateTurns(roomID,size,reset) {
+   if (reset) {
+    turnsMap[roomID] = 0;
+   }
+   else {
+    turnsMap[roomID]++;
+   }
+}
+
+function ResetAlive(roomID, resetArray) {
+        aliveMap[roomID] = resetArray
+        console.log(aliveMap[roomID])
+}
+
+function RemoveAlive(roomID, deadID) {
+    let elementIndex = aliveMap[roomID].indexOf(deadID);
+    if (elementIndex !== -1) {
+        aliveMap[roomID][elementIndex] = deadString
+    }
+}
+
 
 app.use(cors());
