@@ -41,6 +41,7 @@ stream.on('open', () => {
 
 io.on('connection', (socket) => {
     console.log(socket.id);
+    debugUserCount()
 
     socket.on('get-rooms', () => {
         const rooms = io.sockets.adapter.rooms;
@@ -60,8 +61,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('join-room', (room) => {
-        //find the room that called this function
-        console.log(room);
+        console.log(room); //find the room that called this function
         io.in(room).emit('user-connected', room);
     });
 
@@ -86,20 +86,61 @@ io.on('connection', (socket) => {
     })
     
    
-
-    socket.on('send-word', (user_word) => {
-        //check the word
-        //check if game ended (has 1 person remaining)
-        //pass the turn to next person
-
-        // const word = user_word.toLowerCase()
-        // const containsBool = syllables.some(syllable => word.includes(syllable))
+    socket.on('request-syllable', () => {
+        let client_inTurn = 0 // needs parameter
+        const random = Math.floor(Math.random() * syllables.length);
+        let syllable = syllables[random]
+        io.to(roomID).emit('send-syllable', client_inTurn, syllable); //send it to all, let only one client fill the word
+        
     })
+    socket.on('request-word-check', (user_word, syllable) => {
+        //check the word
+        
+
+        const word = user_word.toLowerCase()
+        const containsBool = word.includes(syllable)
+        if (containsBool) {
+            io.to(roomID).emit('accept-word');// add to client option to press enter to submit
+        }
+        else {
+            io.to(roomID).emit('deny-word');  //remove option from client to submit word
+        }
+    })
+
+    socket.on('request-submit-word', (roomID , user_word, syllable) => {
+        const word = user_word.toLowerCase()
+        const containsBool = word.includes(syllable)
+        if (containsBool) {
+            //pass the turn to next person
+            io.to(roomID).emit('submit-word', nextPerson);
+        }
+    })
+
+    socket.on('out-of-time', (user_word, syllable) => {
+        if (totalRemainingPlayers<=1) {
+            //TODO : end game
+        }
+        else {
+            //TODO : take health from client that didn't submit
+            io.to(roomID).emit('out-of-time-pass', nextPerson);
+        }
+    })
+
+    socket.on('disconnect', () => { // doesn't need client side implementation
+        debugUserCount()
+      });
 });
 
-setInterval(() => {
+
+
+// setInterval(() => {
+    // const connectedSockets = io.sockets.sockets.size;
+    // console.log(`Number of connected sockets: ${connectedSockets}`);
+// }, 5000);
+
+function debugUserCount() {
     const connectedSockets = io.sockets.sockets.size;
     console.log(`Number of connected sockets: ${connectedSockets}`);
-}, 5000);
+}
 
 app.use(cors());
