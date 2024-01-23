@@ -65,8 +65,9 @@ io.on('connection', (socket) => {
         io.in(room).emit('user-connected', room);
     });
 
-    socket.on('leave-room', (room) => {
+    socket.on('leave-room', (room) => {// lower priority
         socket.leave(room);
+        //TODO : put user back in main menu
     });
 
     socket.on('get-ids' , (roomID) => {
