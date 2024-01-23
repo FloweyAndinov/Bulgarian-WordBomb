@@ -127,27 +127,29 @@ io.on('connection', (socket) => {
         }
     })
 
-    socket.on('out-of-time', (user_word, syllable) => {
+    socket.on('out-of-time', (roomID, userID, user_word, syllable) => {
         if (totalRemainingPlayers<=1) {
             //TODO : end game
         }
         else {
             //TODO : take health from client that didn't submit
             io.to(roomID).emit('out-of-time-pass', nextPerson);
+            RemoveAlive(roomID, userID);
         }
     })
 
-    socket.on('disconnect', () => { // doesn't need client side implementation
-        debugUserCount()
+    socket.on('delete-room', (roomId) => {
+        io.to(roomId).emit('send-lobby');
+        socket.leave(roomId)
       });
 });
 
 
 
-// setInterval(() => {
-    // const connectedSockets = io.sockets.sockets.size;
-    // console.log(`Number of connected sockets: ${connectedSockets}`);
-// }, 5000);
+setInterval(() => {
+    const connectedSockets = io.sockets.sockets.size;
+    console.log(`Number of connected sockets: ${connectedSockets}`);
+}, 5000);
 
 function debugUserCount() {
     const connectedSockets = io.sockets.sockets.size;

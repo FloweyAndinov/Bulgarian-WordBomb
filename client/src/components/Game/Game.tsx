@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Socket } from 'socket.io-client';
 import WordSection from '../WordSection/WordSection';
+import Home from '../Home/Home';
 
 interface Props {
   socket: Socket;
@@ -10,7 +11,11 @@ interface Props {
 
 function Game({socket , isOwner, roomIDProp} : Props) {
 
+  const [showHome, setShowHome] = useState(false)
+
   useEffect(() => {
+
+    
     const id = socket.id.slice(-6)
     if (isOwner) {
       socket.emit('start-game', id)
@@ -23,13 +28,30 @@ function Game({socket , isOwner, roomIDProp} : Props) {
 
     })
 
+    socket.on('send-lobby', () => {
+      console.log('send-home')
+      setShowHome(true)
+    })
+
+    const handleBeforeUnload = () => {
+      if(isOwner) {
+        socket.emit('delete-room', id)
+      }
+    };
+
+    // Attach an event listener for the beforeunload event
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
   }, [])
+
+  if (showHome) {
+    return <Home socket={socket}/>
+  }
   return (
     <>
     <div>Game</div>
     <WordSection enabled={false}/>
     </>
-
   )
 }
 
