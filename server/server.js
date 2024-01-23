@@ -93,7 +93,10 @@ io.on('connection', (socket) => {
         //game: cycle ids, force current id to type word, others to wait
         const aliveArray = Array.from(room);
         ResetAlive(roomID, aliveArray)
-        
+        io.sockets.adapter.rooms.forEach(function(room){
+            console.log(room)
+            RemoveAlive(room, socket.id)
+        });
     })
     
    
@@ -128,27 +131,50 @@ io.on('connection', (socket) => {
     })
 
     socket.on('out-of-time', (roomID, userID, user_word, syllable) => {
-        if (totalRemainingPlayers<=1) {
-            //TODO : end game
-        }
-        else {
             //TODO : take health from client that didn't submit
             io.to(roomID).emit('out-of-time-pass', nextPerson);
             RemoveAlive(roomID, userID);
-        }
+        
     })
+
+    socket.on('disconnect', () => {
+        io.sockets.adapter.rooms.forEach((value, key) => {
+            console.log(`Key: ${key}, Value: ${Array.from(value).length}`);
+            if (key.length===6) {
+                console.log(key + " attempting to remove user")
+                RemoveAlive(key, socket.id)
+            }
+          });
+      });
 
     socket.on('delete-room', (roomId) => {
         io.to(roomId).emit('send-lobby');
         socket.leave(roomId)
-      });
+    });
+    socket.on('user-disconnect', (roomID) => {
+        RemoveAlive(roomID, socket.id)
+    })
+      
 });
 
 
 
+
+
 setInterval(() => {
-    const connectedSockets = io.sockets.sockets.size;
-    console.log(`Number of connected sockets: ${connectedSockets}`);
+    // const connectedSockets = io.sockets.sockets.size;
+    // console.log(`Number of connected sockets: ${connectedSockets}`);
+    io.sockets.adapter.rooms.forEach((value, key) => {
+        console.log(`Key: ${key}, Value: ${Array.from(value).length}`);
+        if (key.length===6) {
+            console.log("i see a room")
+        }
+      });
+    
+    // io.sockets.adapter.rooms.forEach((key, value) => {
+    //   console.log(`Room ${key} has ${value.length} users`);
+    // });
+        
 }, 5000);
 
 function debugUserCount() {
@@ -168,12 +194,27 @@ function UpdateTurns(roomID,size,reset) {
 function ResetAlive(roomID, resetArray) {
         aliveMap[roomID] = resetArray
         console.log(aliveMap[roomID])
+        console.log(roomID)
+
 }
 
 function RemoveAlive(roomID, deadID) {
+    console.log()
+    if (aliveMap[roomID] == null) return 
     let elementIndex = aliveMap[roomID].indexOf(deadID);
     if (elementIndex !== -1) {
         aliveMap[roomID][elementIndex] = deadString
+    }
+    console.log("check for game end")
+    let counter = 0;
+    for (let i=0; i<aliveMap[roomID].length; i++) {
+        if (aliveMap[roomID][i]!==deadString) {
+            counter++;
+        }
+    }
+    
+    if (counter<=1) {
+        io.to(roomID).emit('send-lobby')
     }
 }
 
