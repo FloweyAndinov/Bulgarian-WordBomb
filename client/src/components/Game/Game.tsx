@@ -11,6 +11,10 @@ interface Props {
 function Game({socket , isOwner, roomIDProp} : Props) {
 
   useEffect(() => {
+    const id = socket.id.slice(-6)
+    if (isOwner) {
+      socket.emit('start-game', id)
+    }
     //event for *play word* and *wait for word*
     socket.on('play-type', () => {
 
