@@ -10,18 +10,31 @@ interface Props {
 function WordSection({socket, enabled}: Props) {
 
     const [typeable, setTypeable] = useState(false)
-    const [word, setWord] = useState("")
+    const [currentword, setCurrentWord] = useState("")
     const [playerWord, setPlayerWord] = useState("")
 
     useEffect(() => {
         setTypeable(enabled)
+        if (enabled) {
+            window.addEventListener('keydown', submitWordtoServer);
+        }
+        else {
+            window.removeEventListener('keydown', submitWordtoServer);
+        }
     }, [enabled])
 
     const sendWordtoServer = (word: string) => {
-        setWord(word);
+        setCurrentWord(word);
         socket.emit('send-player-word', word)
     };
   
+    
+    const submitWordtoServer = (event: KeyboardEvent) => {
+        if (event.key === 'Enter') {
+            console.log('do validate');
+            socket.emit('submit-player-word', currentword)
+          }
+    };
 
   return (
     <>
@@ -37,12 +50,14 @@ const Enabled = ({ sendWord }: { sendWord: (word: string) => void }) => {
     function changeText(e: React.FormEvent<HTMLInputElement>) {
         const text = e.currentTarget.value
         sendWord(text)
-       }
+    }
 
+       
     return (
         <>
+        <span>Press Enter to send</span>
+        <br/>
             <input onChange={changeText}/>
-            <button>Send</button>
         </>
     )
 }
