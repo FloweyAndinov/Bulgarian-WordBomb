@@ -12,6 +12,9 @@ interface Props {
 function Game({socket , isOwner, roomIDProp} : Props) {
 
   const [showHome, setShowHome] = useState(false)
+  const [word, setWord] = useState("")
+  const [playType , setPlayType] = useState(false)
+  const [playerWord, setPlayerWord] = useState("")
 
   useEffect(() => {
 
@@ -21,12 +24,21 @@ function Game({socket , isOwner, roomIDProp} : Props) {
       socket.emit('start-game', id)
     }
     //event for *play word* and *wait for word*
-    socket.on('play-type', () => {
-
+    socket.on('play-type', (serverWord : string) => {
+      setPlayType(true)
+      setWord(serverWord)
+      console.log("received type")
     })
-    socket.on('play-wait', () => {
-
+    socket.on('play-wait', (serverWord : string) => {
+      setPlayType(false)
+      setWord(serverWord)
+      console.log("received wait")
     })
+    socket.on('recieve-player-word', (playerWord : string) => {
+      setPlayerWord(playerWord)
+    })
+
+
 
     socket.on('send-lobby', () => {
       console.log('send-home')
@@ -37,9 +49,7 @@ function Game({socket , isOwner, roomIDProp} : Props) {
       if(isOwner) {
         socket.emit('delete-room', id)
       }
-      else {
-        socket.emit('dc', socket, roomIDProp)
-      }
+      
     };
 
     // Attach an event listener for the beforeunload event
@@ -53,7 +63,7 @@ function Game({socket , isOwner, roomIDProp} : Props) {
   return (
     <>
     <div>Game</div>
-    <WordSection enabled={false}/>
+    <WordSection socket={socket} enabled={playType} word={word} playerword={playerWord}/>
     </>
   )
 }

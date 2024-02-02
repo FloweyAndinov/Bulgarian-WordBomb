@@ -89,14 +89,32 @@ io.on('connection', (socket) => {
     socket.on('start-game', (roomID) => {
         const room = io.sockets.adapter.rooms.get(roomID);
         const ids = Array.from(room);
+
+        //choose random id
+        const randomIndex = Math.floor(Math.random() * ids.length);
+        const randomId = ids[randomIndex];
+
+        //send each id the appropriate event
+        ids.forEach(id => {
+            if (id !== randomId) {
+              // Send event to all IDs except the special one
+              io.to(id).emit('play-wait', "serverwordhere");
+            } else {
+              // Send different event to the special ID
+              io.to(randomId).emit('play-type', "serverwordhere");
+            }
+          });
+
+
         //randomize order (optional)
         //game: cycle ids, force current id to type word, others to wait
+
         const aliveArray = Array.from(room);
         ResetAlive(roomID, aliveArray)
-        io.sockets.adapter.rooms.forEach(function(room){
-            console.log(room)
-            RemoveAlive(room, socket.id)
-        });
+        // io.sockets.adapter.rooms.forEach(function(room){
+        //     console.log(room)
+        //     RemoveAlive(room, socket.id)
+        // });
     })
     
    
@@ -164,12 +182,12 @@ io.on('connection', (socket) => {
 setInterval(() => {
     // const connectedSockets = io.sockets.sockets.size;
     // console.log(`Number of connected sockets: ${connectedSockets}`);
-    io.sockets.adapter.rooms.forEach((value, key) => {
-        console.log(`Key: ${key}, Value: ${Array.from(value).length}`);
-        if (key.length===6) {
-            console.log("i see a room")
-        }
-      });
+    // io.sockets.adapter.rooms.forEach((value, key) => {
+    //     console.log(`Key: ${key}, Value: ${Array.from(value).length}`);
+    //     if (key.length===6) {
+    //         console.log("i see a room")
+    //     }
+    //   });
     
     // io.sockets.adapter.rooms.forEach((key, value) => {
     //   console.log(`Room ${key} has ${value.length} users`);
