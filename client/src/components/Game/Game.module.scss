@@ -1,0 +1,57 @@
+.container{
+   position: absolute;
+   justify-content: center;
+   margin-left : 500px;
+   margin-top : 500px;
+   background-color: red;
+   text-align: center;
+   user-select: none;
+ }
+ 
+ .circle_deg_0 {
+   position: absolute;
+   width: 100px;
+    transform:  translate(230px) 
+ }
+ 
+ .circle_deg_45 {
+   position: absolute;
+   width: 100px;
+    transform:rotate(46deg) translate(230px) rotate(-46deg);
+ }
+ 
+ .circle_deg_90 {
+   position: absolute;
+   width: 100px;
+    transform:rotate(91deg) translate(230px) rotate(-91deg);
+ }
+ 
+ .circle_deg_135 {
+   position: absolute;
+   width: 100px;
+   transform:rotate(136deg) translate(230px) rotate(-136deg);
+ }
+ 
+ .circle_deg_180 {
+   position: absolute;
+   width: 100px;
+    transform:rotate(181deg) translate(230px) rotate(-181deg);
+ }
+ 
+ .circle_deg_225 {
+   position: absolute;
+   width: 100px;
+    transform:rotate(226deg) translate(230px) rotate(-226deg);
+ }
+ 
+ .circle_deg_270 {
+   position: absolute;
+   width: 100px;
+    transform:rotate(271deg) translate(230px) rotate(-271deg);
+ }
+ 
+ .circle_deg_315 {
+   position: absolute;
+   width: 100px;
+    transform:rotate(316deg) translate(230px) rotate(-316deg);
+ }

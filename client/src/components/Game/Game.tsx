@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Socket } from 'socket.io-client';
 import WordSection from '../WordSection/WordSection';
 import Home from '../Home/Home';
+import styles from '../Game/Game.module.scss'
 
 interface Props {
   socket: Socket;
@@ -63,6 +64,41 @@ function Game({socket , isOwner, roomIDProp} : Props) {
   return (
     <>
     <div>Game</div>
+    <div className={styles.container}>
+
+        <div className={styles.circle_deg_0}>
+        Player 1
+      </div> 
+
+      <div className={styles.circle_deg_45}>
+        Player 2
+      </div> 
+
+      <div className={styles.circle_deg_90}>
+        Player 3
+      </div> 
+
+      <div className={styles.circle_deg_135}>
+        Player 4
+      </div> 
+
+      <div className={styles.circle_deg_180}>
+        Player 5
+      </div> 
+
+      <div className={styles.circle_deg_225}>
+        Player 6
+      </div> 
+
+      <div className={styles.circle_deg_270}>
+        Player 7
+      </div> 
+
+      <div className={styles.circle_deg_315}>
+        Player 8
+      </div> 
+
+    </div>
     <WordSection socket={socket} enabled={playType} word={word} playerword={playerWord}/>
     </>
   )
