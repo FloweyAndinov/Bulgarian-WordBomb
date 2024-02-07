@@ -1,57 +1,68 @@
 .container{
    position: absolute;
    justify-content: center;
-   margin-left : 500px;
-   margin-top : 500px;
+   top : 40%;
+   left: 50%;
+   height: max-content;
+   width: max-content;
    background-color: red;
+   transform: translateX(-50%);
    text-align: center;
    user-select: none;
+ }
+
+ .textsend {
+   position: absolute;
+   left: 50%;
+   transform: translateX(-50%);
+   margin: auto;
+   bottom:15%;
  }
  
  .circle_deg_0 {
    position: absolute;
-   width: 100px;
-    transform:  translate(230px) 
+   width:  max-content;
+    transform:  translate(20vh) 
  }
  
  .circle_deg_45 {
    position: absolute;
-   width: 100px;
-    transform:rotate(45deg) translate(230px) rotate(-45deg);
+   width:  max-content;
+    transform:rotate(45deg) translate(20vh) rotate(-45deg);
  }
  
  .circle_deg_90 {
    position: absolute;
-   width: 100px;
-    transform:rotate(90deg) translate(230px) rotate(-90deg);
+   width:  max-content;
+    transform:rotate(90deg) translate(20vh) rotate(-90deg);
  }
  
  .circle_deg_135 {
    position: absolute;
-   width: 100px;
-   transform:rotate(135deg) translate(230px) rotate(-135deg);
+   width:  max-content;
+   transform:rotate(135deg) translate(20vh) rotate(-135deg);
  }
  
  .circle_deg_180 {
    position: absolute;
-   width: 100px;
-    transform:rotate(180deg) translate(230px) rotate(-180deg);
+   width:  max-content;
+    transform:rotate(180deg) translate(20vh) rotate(-180deg);
  }
  
  .circle_deg_225 {
    position: absolute;
-   width: 100px;
-    transform:rotate(225deg) translate(230px) rotate(-225deg);
+   width:  max-content;
+    transform:rotate(225deg) translate(20vh) rotate(-225deg);
  }
  
  .circle_deg_270 {
    position: absolute;
-   width: 100px;
-    transform:rotate(270deg) translate(230px) rotate(-270deg);
+   width:  max-content;
+    transform:rotate(270deg) translate(20vh) rotate(-270deg);
  }
  
  .circle_deg_315 {
    position: absolute;
-   width: 100px;
-    transform:rotate(315deg) translate(230px) rotate(-315deg);
+   width:  max-content;
+    transform:rotate(315deg) translate(20vh) rotate(-315deg);
  }

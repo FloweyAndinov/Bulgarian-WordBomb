@@ -65,7 +65,8 @@ function Game({socket , isOwner, roomIDProp} : Props) {
     <>
     <div>Game</div>
     <div className={styles.container}>
-
+    <div style={{position:'absolute', width:'100px', height:'100px', backgroundColor:'green', left:'-30%', top:'-100%'}}></div>
+    <span style={{color:'transparent'}}>Player 0</span>
         <div className={styles.circle_deg_0}>
         Player 1
       </div> 
@@ -97,9 +98,12 @@ function Game({socket , isOwner, roomIDProp} : Props) {
       <div className={styles.circle_deg_315}>
         Player 8
       </div> 
-
+      
     </div>
-    <WordSection socket={socket} enabled={playType} word={word} playerword={playerWord}/>
+    
+    <div className={styles.textsend}>
+      <WordSection socket={socket} enabled={playType} word={word} playerword={playerWord} />
+      </div>
     </>
   )
 }
