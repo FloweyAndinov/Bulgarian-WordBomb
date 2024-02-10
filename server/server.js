@@ -20,6 +20,8 @@ let turnsMap = {};
 
 let aliveMap = {};
 
+let currentsyllableMap = new Map();
+
 const deadString = '______' //this replaces id when player dies
 
 const stream = fs.createReadStream(filePath, { encoding: 'utf-8' })
@@ -92,16 +94,22 @@ io.on('connection', (socket) => {
 
         //choose random id
         const randomIndex = Math.floor(Math.random() * ids.length);
-        const randomId = ids[randomIndex];
+        const randomplayerId = ids[randomIndex];
+
+        let randomsyllableId = Math.floor(Math.random() * syllables.length);
+        let currentSyllable = syllables[randomsyllableId]
+
+        currentsyllableMap.set(roomID , currentSyllable);
+
 
         //send each id the appropriate event
         ids.forEach(id => {
-            if (id !== randomId) {
+            if (id !== randomplayerId) {
               // Send event to all IDs except the special one
-              io.to(id).emit('play-wait', "serverwordhere");
+              io.to(id).emit('play-wait', currentSyllable);
             } else {
               // Send different event to the special ID
-              io.to(randomId).emit('play-type', "serverwordhere");
+              io.to(randomplayerId).emit('play-type', currentSyllable);
             }
           });
 
