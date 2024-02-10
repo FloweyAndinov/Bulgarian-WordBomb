@@ -7,61 +7,85 @@ interface Props {
     enabled : boolean
     word : string
     playerword : string
+    roomID? : string
 }
-function WordSection({socket, enabled}: Props) {
 
+interface EnabledProps {
+    socket : Socket
+    roomID? : string
+}
+function WordSection({socket, enabled, roomID}: Props) {
     const [typeable, setTypeable] = useState(false)
     const [currentword, setCurrentWord] = useState("")
-    const [playerWord, setPlayerWord] = useState("")
-
-    socket.on('recieve-player-word', (word : string) => {
-        setPlayerWord(word)
-    })
-
-    socket.on ('recieve-word-to-play', (word : string) => {
-        setCurrentWord(word)
-    })
-
     useEffect(() => {
-        setTypeable(enabled)
-        if (enabled) {
-            setPlayerWord("")
-            window.addEventListener('keydown', submitWordtoServer);
-        }
-        else {
-            setPlayerWord("")
-            window.removeEventListener('keydown', submitWordtoServer);
-        }
-    }, [enabled])
-
-    const sendWordtoServer = (word: string) => {
-        setCurrentWord(word);
-        //not implemented - socket.emit('send-player-word', word)
-    };
-  
+    setTypeable(enabled)
+    console.log(enabled)
+    console.log(typeable)
+    },[enabled])
     
-    const submitWordtoServer = (event: KeyboardEvent) => {
-        if (event.key === 'Enter') {
-            console.log('do validate');
-             //not implemented - socket.emit('submit-player-word', playerWord)
-          }
-    };
+
+    // socket.on('recieve-player-word', (word : string) => {
+    //     setPlayerWord(word)
+    // })
+
+    // socket.on ('recieve-word-to-play', (word : string) => {
+    //     setCurrentWord(word)
+    // })
+
+   
+
+   
 
   return (
     <>
-    {typeable? <Enabled sendWord={sendWordtoServer}/> : <Disabled/>}
+    {typeable? <Enabled socket={socket} roomID={roomID}/> : <Disabled/>}
     </>
   )
 
   
 }
 
-const Enabled = ({ sendWord }: { sendWord: (word: string) => void }) => {
+function Enabled({socket, roomID}: EnabledProps) {
 
+    const [playerWord, setPlayerWord] = useState("")
+
+    useEffect(() => {
+        window.addEventListener('keydown', submitWordtoServer);
+
+        return () => {
+            window.removeEventListener('keydown', submitWordtoServer);
+        };
+
+
+    }, [playerWord])
+   
+    
     function changeText(e: React.FormEvent<HTMLInputElement>) {
         const text = e.currentTarget.value
-        sendWord(text)
+        sendWordtoServer(text)
+        
     }
+
+    const sendWordtoServer = (word: string) => {
+        setPlayerWord(word)
+        console.log(word)
+        //not implemented - socket.emit('send-player-word', word)
+    };
+  
+    
+    const submitWordtoServer = (event: KeyboardEvent) => {
+        const wordToSend = playerWord
+        if (event.key === 'Enter') {
+            console.log(wordToSend);
+            if (roomID != null) {
+                socket.emit('request-submit-word', wordToSend, roomID)
+            }
+            else {
+                socket.emit('request-submit-word', wordToSend, socket.id.slice(-6))
+            }
+          }
+    };
+    
 
        
     return (
