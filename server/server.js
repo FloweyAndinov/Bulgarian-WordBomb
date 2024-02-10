@@ -147,12 +147,14 @@ io.on('connection', (socket) => {
         }
     })
 
-    socket.on('request-submit-word', (roomID , user_word, syllable) => {
+    socket.on('request-submit-word', (user_word, roomID) => {
         const word = user_word.toLowerCase()
+        const syllable = currentsyllableMap.get(roomID)
         const containsBool = word.includes(syllable)
         if (containsBool) {
             //pass the turn to next person
-            io.to(roomID).emit('submit-word', nextPerson);
+            // io.to(roomID).emit('submit-word', nextPerson);
+            console.log(word)
         }
     })
 
