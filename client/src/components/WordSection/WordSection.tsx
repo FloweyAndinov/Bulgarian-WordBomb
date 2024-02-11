@@ -92,13 +92,8 @@ function Enabled({socket, roomID}: EnabledProps) {
         const wordToSend = playerWord
         if (event.key === 'Enter') {
             console.log(wordToSend , 'trying to send');
-            console.log(roomId)
-            if (roomID != null) {
+            // console.log(roomId)
                 socket.emit('request-submit-word', wordToSend, roomId)
-            }
-            else {
-                socket.emit('request-submit-word', wordToSend, roomId)
-            }
           }
     };
     
