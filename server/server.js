@@ -52,17 +52,13 @@ stream.on('open', () => {
         });
 });
 
-function checkStringInFile(wordsPath, searchString) {
-    try {
-        const data = fs.readFileSync(wordsPath,
-    { encoding: 'utf8', flag: 'r' });
-        return data.includes(searchString);
-    } catch (error) {
-        console.error('Error reading file:', error);
-        throw error;
-    }
-}
 const wordsPath = 'cyrillic_words.txt';
+const data = fs.readFileSync(wordsPath, { encoding: 'utf8', flag: 'r' });
+
+function checkStringInFile(wordsPath, searchString) {
+        
+        return data.includes(searchString);
+}
 
 
 io.on('connection', (socket) => {
@@ -78,6 +74,7 @@ io.on('connection', (socket) => {
 
     socket.on('set-name', (name) => {
         namesMap.set(socket.id, name);
+        console.log("name added")
     })
 
     socket.on('create-room', (room) => {
@@ -170,8 +167,10 @@ io.on('connection', (socket) => {
     })
 
     socket.on('request-submit-word',(user_word, roomID) => {
+        
         const word = user_word.toLowerCase()
         const syllable = currentsyllableMap.get(roomID)
+        console.log(syllable)
         const containsBool = word.includes(syllable)
         if (containsBool) {
             const found = checkStringInFile(wordsPath, word)

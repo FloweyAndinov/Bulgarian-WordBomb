@@ -13,12 +13,21 @@ function Home( {socket}: Props) {
 
     const [showJoin, setShowJoin] = useState(false);
     const [showCreate, setShowCreate] = useState(false);
+    const [nameText, setNameText] = useState('');
     
     useEffect(() => {
         socket.on('connect', () => {
         // console.log(socket.id);
         });
     }, [socket]);
+
+    const handleInputChange = (e : React.ChangeEvent<HTMLInputElement>) => {
+        setNameText(e.target.value);
+      };
+
+    function SetName() {
+        socket.emit('set-name' , nameText)
+    }
 
     if (showJoin) {
         return <Join />;
@@ -31,6 +40,11 @@ function Home( {socket}: Props) {
     <>
     <div className={styles.title}>
         WordBomb на български
+    </div>
+    <div>
+        <span>Въведи си името тук</span>
+        <input type="text" onChange={handleInputChange}/>
+        <button onClick={SetName}>Сложи</button>
     </div>
     <div className={styles.actionButtons}>
         <button onClick={() => setShowCreate(true)}>Create</button>
