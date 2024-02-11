@@ -16,13 +16,22 @@ interface EnabledProps {
 }
 function WordSection({socket, enabled, roomID}: Props) {
     const [typeable, setTypeable] = useState(false)
+    const [roomId, setRoomID] = useState('')
     const [currentword, setCurrentWord] = useState("")
     useEffect(() => {
     setTypeable(enabled)
-    console.log(enabled)
-    console.log(typeable)
+    // console.log(enabled)
+    // console.log(typeable)
     },[enabled])
     
+    useEffect(() => {
+        if (roomID !=null) {
+            setRoomID(roomID)
+        }
+        else {
+            setRoomID(socket.id.slice(-6))
+        }
+    }, [roomID])
 
     // socket.on('recieve-player-word', (word : string) => {
     //     setPlayerWord(word)
@@ -48,8 +57,11 @@ function WordSection({socket, enabled, roomID}: Props) {
 function Enabled({socket, roomID}: EnabledProps) {
 
     const [playerWord, setPlayerWord] = useState("")
+    const [roomId, setRoomID] = useState('')
+
 
     useEffect(() => {
+        console.log(roomID? 'found' : 'not found')
         window.addEventListener('keydown', submitWordtoServer);
 
         return () => {
@@ -58,7 +70,10 @@ function Enabled({socket, roomID}: EnabledProps) {
 
 
     }, [playerWord])
-   
+
+    useEffect(() => {
+            setRoomID(socket.id.slice(-6))
+    }, [roomID])
     
     function changeText(e: React.FormEvent<HTMLInputElement>) {
         const text = e.currentTarget.value
@@ -76,12 +91,13 @@ function Enabled({socket, roomID}: EnabledProps) {
     const submitWordtoServer = (event: KeyboardEvent) => {
         const wordToSend = playerWord
         if (event.key === 'Enter') {
-            console.log(wordToSend);
+            console.log(wordToSend , 'trying to send');
+            console.log(roomId)
             if (roomID != null) {
-                socket.emit('request-submit-word', wordToSend, roomID)
+                socket.emit('request-submit-word', wordToSend, roomId)
             }
             else {
-                socket.emit('request-submit-word', wordToSend, socket.id.slice(-6))
+                socket.emit('request-submit-word', wordToSend, roomId)
             }
           }
     };

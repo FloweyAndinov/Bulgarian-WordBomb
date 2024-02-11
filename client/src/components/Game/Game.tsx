@@ -125,7 +125,7 @@ function Game({socket , isOwner, roomIDProp} : Props) {
     
     
     <div className={styles.textsend}>
-      <WordSection socket={socket} enabled={playType} word={word} playerword={playerWord} roomID={roomIDProp } />
+      <WordSection socket={socket} enabled={playType} word={word} playerword={playerWord} roomID={roomIDProp} />
       </div>
     </>
   )
