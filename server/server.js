@@ -100,7 +100,16 @@ io.on('connection', (socket) => {
     socket.on('get-ids' , (roomID) => {
         const room = io.sockets.adapter.rooms.get(roomID);
         const ids = Array.from(room);
-        socket.emit('ids', ids);
+        let names = []
+        ids.forEach(element => {
+            if (namesMap.has(element) != null) {
+                names.push(namesMap.get(element))
+            }
+            else {
+                names.push(element)
+            }
+        });
+        socket.emit('ids', ids, names);
     });
     socket.on('send-game-screen', (roomID) => {
         //send everyone to game screen

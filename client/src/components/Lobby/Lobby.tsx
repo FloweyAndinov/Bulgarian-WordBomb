@@ -10,6 +10,7 @@ interface Props {
 function Lobby( {socket , isOwner, roomIDProp ='errorroomID'}: Props) {
     const [roomID, setRoomID] = useState<string>('');
     const [ids, setIds] = useState<string[]>([]);
+    const [names, setNames] = useState<string[]>([]);
     const [startGame, setStartGame] = useState<boolean>(false);
 
     useEffect(() => {
@@ -46,11 +47,22 @@ function Lobby( {socket , isOwner, roomIDProp ='errorroomID'}: Props) {
 
     function getIds (roomID: string) {
         socket.emit('get-ids', roomID);
-        socket.on('ids', (ids) => {
+        socket.on('ids', (ids , names) => {
             console.log(ids);
             setIds(ids);
+            setNames(names)
           });
     }
+
+    function NameisYou(index : number , id : string) {
+      let idindex = ids.indexOf(id)
+      if (idindex < 0) {
+        return false; // this should be impossible to happen
+      }
+      return idindex == index ? true : false
+    }
+
+
   return (
     <>
     {startGame ? <Game socket={socket} isOwner={isOwner} roomIDProp={roomIDProp}/> : 
@@ -58,8 +70,8 @@ function Lobby( {socket , isOwner, roomIDProp ='errorroomID'}: Props) {
     <div>Create</div>
     <div>{roomID}</div>
     <ul>
-        {ids.map((id, index) => (
-            <li key={index}>{id} {id===socket.id? <span>(Ти)</span> : <></>}</li>
+        {names.map((name, index) => (
+            <li key={index}>{name} {name==null? ids[index] : <></>}{NameisYou(index, socket.id)? <span>(Ти)</span> : <></>}</li>
         ))}
     </ul>
     {isOwner ? <button onClick={() => socket.emit('send-game-screen', roomID)}>Start Game</button> : <></>}
