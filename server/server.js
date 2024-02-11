@@ -22,6 +22,8 @@ let aliveMap = {};
 
 let currentsyllableMap = new Map();
 
+let namesMap = new Map(); // id : name
+
 const deadString = '______' //this replaces id when player dies
 
 const stream = fs.createReadStream(syllablesPath, { encoding: 'utf-8' })
@@ -73,6 +75,10 @@ io.on('connection', (socket) => {
 
         socket.emit('rooms', Array.from(rooms));
     });
+
+    socket.on('set-name', (name) => {
+        namesMap.set(socket.id, name);
+    })
 
     socket.on('create-room', (room) => {
         socket.join(room);
@@ -189,6 +195,7 @@ io.on('connection', (socket) => {
     })
 
     socket.on('disconnect', () => {
+        namesMap.delete(socket.id) // won't throw error if doesn't exist
         io.sockets.adapter.rooms.forEach((value, key) => {
             console.log(`Key: ${key}, Value: ${Array.from(value).length}`);
             if (key.length===6) {
