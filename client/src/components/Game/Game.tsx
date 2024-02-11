@@ -3,6 +3,8 @@ import { Socket } from 'socket.io-client';
 import WordSection from '../WordSection/WordSection';
 import Home from '../Home/Home';
 import styles from '../Game/Game.module.scss'
+import bombPicture from '../../assets/bomb.png'
+import arrowPicture from '../../assets/arrow.png'
 
 interface Props {
   socket: Socket;
@@ -66,11 +68,21 @@ function Game({socket , isOwner, roomIDProp} : Props) {
     <div>Game</div>
     <div className={styles.container}>
 
-    <div style={{position:'absolute', width:'max-content', height:'100px', backgroundColor:'green', left:'-120%', top:'-100%'}}>
+    <div style={{position:'absolute', width:'max-content', height:'100px', left:'-120%', top:'11vh', }}>
       <span style={{width: 'max-content'}}>Write a word that cointains</span>
       <br />
       <span style={{color: 'red'}}>{word}</span>
     </div>
+
+    <div style={{position: 'absolute', left : '4vh', top: '-4vh',transformOrigin: 'center left',  transform: 'rotate(-135deg'}}>
+      <img src={arrowPicture} alt="arrow" style={{width : '15vh', height: '15vh'}}/>
+    </div>
+
+    <div style={{position: 'absolute', left : '-7vh', top: '-7vh'}}>
+      <img src={bombPicture} alt="bomb" style={{width : '20vh', height: '20vh'}}/>
+    </div>
+
+   
     
     <span style={{color:'transparent'}}>Player 0</span> {/*helps with positioning the image */}
         <div className={styles.circle_deg_0}>
@@ -109,7 +121,7 @@ function Game({socket , isOwner, roomIDProp} : Props) {
     
     
     <div className={styles.textsend}>
-      <WordSection socket={socket} enabled={playType} word={word} playerword={playerWord} />
+      <WordSection socket={socket} enabled={playType} word={word} playerword={playerWord} roomID={roomIDProp } />
       </div>
     </>
   )
