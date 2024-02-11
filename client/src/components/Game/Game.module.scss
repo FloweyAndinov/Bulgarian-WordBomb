@@ -5,7 +5,7 @@
    left: 50%;
    height: max-content;
    width: max-content;
-   background-color: red;
+  //  background-color: red;
    transform: translateX(-50%);
    text-align: center;
    user-select: none;
@@ -19,6 +19,15 @@
    bottom:15%;
  }
  
+ .bombpic {
+  pointer-events: none;
+ }
+
+ .arrowpic {
+  pointer-events: none;
+  transition: transform 0.3s ease-in-out;
+ }
+
  .circle_deg_0 {
    position: absolute;
    width:  max-content;

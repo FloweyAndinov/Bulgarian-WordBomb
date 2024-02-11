@@ -18,6 +18,7 @@ function Game({socket , isOwner, roomIDProp} : Props) {
   const [word, setWord] = useState("")
   const [playType , setPlayType] = useState(false)
   const [playerWord, setPlayerWord] = useState("")
+  const [arrowAngle, setArrowAngle] = useState(0)
 
   useEffect(() => {
 
@@ -27,18 +28,21 @@ function Game({socket , isOwner, roomIDProp} : Props) {
       socket.emit('start-game', id)
     }
     //event for *play word* and *wait for word*
-    socket.on('play-type', (serverWord : string) => {
+    socket.on('play-type', (serverWord : string, playerAngle : number) => {
       setPlayType(true)
       setWord(serverWord)
-      console.log("received type")
+      console.log(playerAngle)
+      setArrowAngle(playerAngle)
     })
-    socket.on('play-wait', (serverWord : string) => {
+    socket.on('play-wait', (serverWord : string, playerAngle : number) => {
       setPlayType(false)
       setWord(serverWord)
-      console.log("received wait")
+      console.log(playerAngle)
+      setArrowAngle(playerAngle)
     })
     socket.on('recieve-player-word', (playerWord : string) => {
       setPlayerWord(playerWord)
+      
     })
 
 
@@ -74,11 +78,11 @@ function Game({socket , isOwner, roomIDProp} : Props) {
       <span style={{color: 'red'}}>{word}</span>
     </div>
 
-    <div style={{position: 'absolute', left : '4vh', top: '-4vh',transformOrigin: 'center left',  transform: 'rotate(-135deg'}}>
+    <div className={styles.arrowpic} style={{position: 'absolute', left : '4vh', top: '-4vh',transformOrigin: 'center left',  transform: `rotate(${arrowAngle}deg)`}}>
       <img src={arrowPicture} alt="arrow" style={{width : '15vh', height: '15vh'}}/>
     </div>
 
-    <div style={{position: 'absolute', left : '-7vh', top: '-7vh'}}>
+    <div className={styles.bombpic} style={{position: 'absolute', left : '-7vh', top: '-7vh'}}>
       <img src={bombPicture} alt="bomb" style={{width : '20vh', height: '20vh'}}/>
     </div>
 

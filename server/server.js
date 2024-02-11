@@ -122,10 +122,10 @@ io.on('connection', (socket) => {
         ids.forEach(id => {
             if (id !== randomplayerId) {
               // Send event to all IDs except the special one
-              io.to(id).emit('play-wait', currentSyllable);
+              io.to(id).emit('play-wait', currentSyllable, 0); //TODO : dynamic player angle
             } else {
               // Send different event to the special ID
-              io.to(randomplayerId).emit('play-type', currentSyllable);
+              io.to(randomplayerId).emit('play-type', currentSyllable, 0); //TODO : dynamic player angle
             }
           });
 
