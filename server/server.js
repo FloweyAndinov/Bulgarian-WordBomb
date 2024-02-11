@@ -12,7 +12,7 @@ const io = require('socket.io')(3000, {
         methods : ['GET', 'POST'],
     }
 });
-const filePath = 'words.csv';
+const syllablesPath = 'words.csv';
 
 let syllables = [];
 
@@ -24,11 +24,14 @@ let currentsyllableMap = new Map();
 
 const deadString = '______' //this replaces id when player dies
 
-const stream = fs.createReadStream(filePath, { encoding: 'utf-8' })
+const stream = fs.createReadStream(syllablesPath, { encoding: 'utf-8' })
 
 stream.on('error', (error) => {
     console.error('Error opening the file:', error);
 });
+
+
+
 
 // Handle 'open' event
 stream.on('open', () => {
@@ -46,6 +49,19 @@ stream.on('open', () => {
             console.error('Error parsing CSV:', error);
         });
 });
+
+function checkStringInFile(wordsPath, searchString) {
+    try {
+        const data = fs.readFileSync(wordsPath,
+    { encoding: 'utf8', flag: 'r' });
+        return data.includes(searchString);
+    } catch (error) {
+        console.error('Error reading file:', error);
+        throw error;
+    }
+}
+const wordsPath = 'cyrillic_words.txt';
+
 
 io.on('connection', (socket) => {
     console.log(socket.id);
@@ -147,14 +163,21 @@ io.on('connection', (socket) => {
         }
     })
 
-    socket.on('request-submit-word', (user_word, roomID) => {
+    socket.on('request-submit-word',(user_word, roomID) => {
         const word = user_word.toLowerCase()
         const syllable = currentsyllableMap.get(roomID)
         const containsBool = word.includes(syllable)
         if (containsBool) {
-            //pass the turn to next person
-            // io.to(roomID).emit('submit-word', nextPerson);
-            console.log(word)
+            const found = checkStringInFile(wordsPath, word)
+            if (found) {
+                console.log('word found')
+                 //TODO : pass the turn to next person
+                // io.to(roomID).emit('submit-word', nextPerson);
+            }
+            else {
+                console.log('no word found, correct syllable')
+                //TODO : flash the user red text (to indicate fail)
+            }
         }
     })
 
