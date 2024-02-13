@@ -45,7 +45,7 @@ stream.on('open', () => {
             syllables.push(Object.values(data)[0]);
         })
         .on('end', () => {
-            console.log('CSV data loaded:', syllables);
+            // console.log('CSV data loaded:', syllables);
         })
         .on('error', (error) => {
             console.error('Error parsing CSV:', error);
@@ -100,16 +100,8 @@ io.on('connection', (socket) => {
     socket.on('get-ids' , (roomID) => {
         const room = io.sockets.adapter.rooms.get(roomID);
         const ids = Array.from(room);
-        let names = []
-        ids.forEach(element => {
-            if (namesMap.has(element) != null) {
-                names.push(namesMap.get(element))
-            }
-            else {
-                names.push(element)
-            }
-        });
-        socket.emit('ids', ids, names);
+        let namesArray = GetNameArray(ids)
+        socket.emit('ids', ids, namesArray);
     });
     socket.on('send-game-screen', (roomID) => {
         //send everyone to game screen
@@ -119,6 +111,10 @@ io.on('connection', (socket) => {
     socket.on('start-game', (roomID) => {
         const room = io.sockets.adapter.rooms.get(roomID);
         const ids = Array.from(room);
+
+        let namesArray = GetNameArray(ids)
+        console.log(namesArray, 'are being sent')
+        socket.emit('recieve-players-names', namesArray)
 
         //choose random id
         const randomIndex = Math.floor(Math.random() * ids.length);
@@ -255,6 +251,24 @@ function UpdateTurns(roomID,size,reset) {
    else {
     turnsMap[roomID]++;
    }
+}
+
+function GetNameArray(ids) {
+    console.log(ids)
+    let names = []
+    ids.forEach(element => {
+        console.log('adding element')
+        if (namesMap.has(element) != null) {
+            names.push(namesMap.get(element))
+            console.log(namesMap.get(element))
+        }
+        else {
+            names.push(element)
+            console.log(element)
+        }
+    });
+   
+    return names
 }
 
 function ResetAlive(roomID, resetArray) {
