@@ -114,7 +114,7 @@ io.on('connection', (socket) => {
 
         let namesArray = GetNameArray(ids)
         console.log(namesArray, 'are being sent')
-        socket.emit('recieve-players-names', namesArray)
+        io.to(roomID).emit('recieve-players-names', namesArray)
 
         //choose random id
         const randomIndex = Math.floor(Math.random() * ids.length);
