@@ -255,20 +255,20 @@ function UpdateTurns(roomID,size,reset) {
 
 function GetNameArray(ids) {
     console.log(ids)
-    let names = []
+    let namesArr = []
     ids.forEach(element => {
-        console.log('adding element')
-        if (namesMap.has(element) != null) {
-            names.push(namesMap.get(element))
-            console.log(namesMap.get(element))
+        
+        if (namesMap.has(element)) {
+            namesArr.push(namesMap.get(element))
+            
         }
         else {
-            names.push(element)
-            console.log(element)
+            
+            namesArr.push(element.slice(-6))
         }
     });
    
-    return names
+    return namesArr
 }
 
 function ResetAlive(roomID, resetArray) {
