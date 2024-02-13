@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { CSSProperties, useEffect, useState } from 'react'
 import { Socket } from 'socket.io-client';
 import WordSection from '../WordSection/WordSection';
 import Home from '../Home/Home';
@@ -19,6 +19,7 @@ function Game({socket , isOwner, roomIDProp} : Props) {
   const [playType , setPlayType] = useState(false)
   const [playerWord, setPlayerWord] = useState("")
   const [arrowAngle, setArrowAngle] = useState(0)
+  const [playerList, setPlayerList] = useState<Array<string>>([])
 
   useEffect(() => {
 
@@ -44,7 +45,10 @@ function Game({socket , isOwner, roomIDProp} : Props) {
       setPlayerWord(playerWord)
       
     })
-
+    socket.on('recieve-players-names', (recievedList : Array<string>) => {
+        setPlayerList(recievedList)
+        console.log('recieved players')
+    })
 
 
     socket.on('send-lobby', () => {
@@ -59,15 +63,25 @@ function Game({socket , isOwner, roomIDProp} : Props) {
       
     };
 
+    
+  
+
     // Attach an event listener for the beforeunload event
     window.addEventListener('beforeunload', handleBeforeUnload);
 
   }, [])
 
+  const playerStyle  = (index : number) : CSSProperties => ({
+    position: 'absolute',
+    width: 'max-content',
+    transform: `rotate(${index * 45}deg) translate(20vh) rotate(-${index * 45}deg)`
+  });
+
   if (showHome) {
     return <Home socket={socket}/>
   }
   return (
+    
     <>
     <div>Game</div>
     <div className={styles.container}>
@@ -89,37 +103,15 @@ function Game({socket , isOwner, roomIDProp} : Props) {
    
     
     <span style={{color:'transparent'}}>Player 0</span> {/*helps with positioning the image */}
-        <div className={styles.circle_deg_0}>
-        Player 1
-      </div> 
+       <div className='players'>
+        {playerList.map((player, index) => (  
 
-      <div className={styles.circle_deg_45}>
-        Player 2
-      </div> 
+        <div key={player} style={playerStyle(index)}>
+          {player}
+        </div>
 
-      <div className={styles.circle_deg_90}>
-        Player 3
-      </div> 
-
-      <div className={styles.circle_deg_135}>
-        Player 4
-      </div> 
-
-      <div className={styles.circle_deg_180}>
-        Player 5
-      </div> 
-
-      <div className={styles.circle_deg_225}>
-        Player 6
-      </div> 
-
-      <div className={styles.circle_deg_270}>
-        Player 7
-      </div> 
-
-      <div className={styles.circle_deg_315}>
-        Player 8
-      </div> 
+        ))}
+       </div>
       
     </div>
     
