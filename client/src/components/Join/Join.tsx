@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react'
 import styles from './Join.module.scss'
 import {Socket, io} from 'socket.io-client'
 import {socket} from '../../socket'
-import Create from '../Lobby/Lobby';
+import Lobby from '../Lobby/Lobby';
 
 function Join() {
   const [rooms, setRooms] = React.useState<Map<string, Set<string>>>(new Map());
@@ -30,7 +30,7 @@ function Join() {
         }
   return (
     <>
-    {joinedRoom ? <Create socket={socket} isOwner={false} roomIDProp={roomID}/> :
+    {joinedRoom ? <Lobby socket={socket} isOwner={false} roomIDProp={roomID}/> :
       <div>
             <h1 className={styles.title}>Join a Game</h1>
             <div className={styles.gamesList}>
