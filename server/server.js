@@ -16,11 +16,48 @@ const syllablesPath = 'words.csv';
 
 let syllables = [];
 
-let turnsMap = {};
+class GameTurns{
+    constructor(turnArray, turnCounter) {
+        this.turnArray = turnArray
+        this.turnCounter = turnCounter
+        let randomsyllableId = Math.floor(Math.random() * syllables.length);
+        this.syllable = syllables[randomsyllableId]
+    }
+    GenerateSyllable() {
+        let randomsyllableId = Math.floor(Math.random() * syllables.length);
+        this.syllable = syllables[randomsyllableId]
+        return this.syllable
+    }
+    RemovePlayer(index) {
+        this.turnArray[index] = deadString
+    }
+    PassTurn() {
+        while (true) {
+            let nextTurn = this.turnCounter+1>this.turnArray.length-1? this.turnCounter+1 : 0;
+            
+            if (this.turnArray[nextTurn] != deadString) {
+                let obj = {
+                 id: this.turnArray[nextTurn],
+                 index: nextTurn
+                }
+                return obj
+            }
 
-let aliveMap = {};
+        }
+    }
+    CheckEnd() {
+        let counter = 0;
+        this.turnArray.forEach(
+            player => {
+                if (player!=deadString)
+                counter++;
+            }
+        )
+        return counter <=1 ? true : false
+    }
+}
 
-let currentsyllableMap = new Map();
+let gamesMap = new Map();
 
 let namesMap = new Map(); // id : name
 
@@ -120,11 +157,11 @@ io.on('connection', (socket) => {
         const randomIndex = Math.floor(Math.random() * ids.length);
         const randomplayerId = ids[randomIndex];
 
-        let randomsyllableId = Math.floor(Math.random() * syllables.length);
-        let currentSyllable = syllables[randomsyllableId]
-
-        currentsyllableMap.set(roomID , currentSyllable);
-
+        const aliveArray = Array.from(room);
+        gamesMap.set(roomID, new GameTurns(aliveArray, randomplayerId))
+        console.log(gamesMap.get(roomID), ' ', roomID)
+        // currentsyllableMap.set(roomID , currentSyllable);
+        let currentSyllable = gamesMap.get(roomID).syllable
 
         //send each id the appropriate event
         ids.forEach(id => {
@@ -137,26 +174,27 @@ io.on('connection', (socket) => {
             }
           });
 
-
-        //randomize order (optional)
+          
+        
         //game: cycle ids, force current id to type word, others to wait
 
-        const aliveArray = Array.from(room);
-        ResetAlive(roomID, aliveArray)
+        
         // io.sockets.adapter.rooms.forEach(function(room){
         //     console.log(room)
         //     RemoveAlive(room, socket.id)
         // });
     })
+
+    
     
    
-    socket.on('request-syllable', () => {
-        let client_inTurn = 0 // needs parameter
-        const random = Math.floor(Math.random() * syllables.length);
-        let syllable = syllables[random]
-        io.to(roomID).emit('send-syllable', client_inTurn, syllable); //send it to all, let only one client fill the word
+    // socket.on('request-syllable', () => {
+    //     let client_inTurn = 0 // needs parameter
+    //     const random = Math.floor(Math.random() * syllables.length);
+    //     let syllable = syllables[random]
+    //     io.to(roomID).emit('send-syllable', client_inTurn, syllable); //send it to all, let only one client fill the word
         
-    })
+    // })
     socket.on('request-word-check', (user_word, syllable) => {
         //check the word
         
@@ -174,15 +212,24 @@ io.on('connection', (socket) => {
     socket.on('request-submit-word',(user_word, roomID) => {
         
         const word = user_word.toLowerCase()
-        const syllable = currentsyllableMap.get(roomID)
-        console.log(syllable)
+        console.log(roomID)
+        const syllable =  gamesMap.get(roomID).syllable
         const containsBool = word.includes(syllable)
         if (containsBool) {
             const found = checkStringInFile(wordsPath, word)
             if (found) {
                 console.log('word found')
                  //TODO : pass the turn to next person
-                // io.to(roomID).emit('submit-word', nextPerson);
+                 let nextObj = gamesMap.get(roomID).PassTurn()
+                 let nextPerson = nextObj.nextPerson
+                 let nextIndex = nextObj.nextIndex
+
+                 let randomsyllableId = Math.floor(Math.random() * syllables.length);
+                 let currentSyllable = syllables[randomsyllableId]
+
+
+                io.to(roomID).emit('play-wait',currentSyllable, nextIndex);
+                io.to(nextPerson).emit('play-type',currentSyllable, nextIndex)
             }
             else {
                 console.log('no word found, correct syllable')
@@ -193,7 +240,7 @@ io.on('connection', (socket) => {
 
     socket.on('out-of-time', (roomID, userID, user_word, syllable) => {
             //TODO : take health from client that didn't submit
-            io.to(roomID).emit('out-of-time-pass', nextPerson);
+            io.to(roomID).emit('pass-turn', nextPerson);
             RemoveAlive(roomID, userID);
         
     })
@@ -244,15 +291,6 @@ function debugUserCount() {
     console.log(`Number of connected sockets: ${connectedSockets}`);
 }
 
-function UpdateTurns(roomID,size,reset) {
-   if (reset) {
-    turnsMap[roomID] = 0;
-   }
-   else {
-    turnsMap[roomID]++;
-   }
-}
-
 function GetNameArray(ids) {
     console.log(ids)
     let namesArr = []
@@ -271,29 +309,25 @@ function GetNameArray(ids) {
     return namesArr
 }
 
-function ResetAlive(roomID, resetArray) {
-        aliveMap[roomID] = resetArray
-        console.log(aliveMap[roomID])
-        console.log(roomID)
+// function ResetAlive(roomID, resetArray, randomplayerId) {
+//         // aliveMap[roomID] = resetArray
+//         // console.log(aliveMap[roomID])
+//         // console.log(roomID)
+        
 
-}
+// }
 
 function RemoveAlive(roomID, deadID) {
-    console.log()
+   
     if (aliveMap[roomID] == null) return 
     let elementIndex = aliveMap[roomID].indexOf(deadID);
     if (elementIndex !== -1) {
-        aliveMap[roomID][elementIndex] = deadString
+        gamesMap.get(roomID).RemovePlayer(elementIndex)
     }
     console.log("check for game end")
-    let counter = 0;
-    for (let i=0; i<aliveMap[roomID].length; i++) {
-        if (aliveMap[roomID][i]!==deadString) {
-            counter++;
-        }
-    }
+    let gameEnded = gamesMap.get(roomID).CheckEnd
     
-    if (counter<=1) {
+    if (gameEnded) {
         io.to(roomID).emit('send-lobby')
     }
 }

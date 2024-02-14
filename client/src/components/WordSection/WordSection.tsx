@@ -12,11 +12,11 @@ interface Props {
 
 interface EnabledProps {
     socket : Socket
-    roomID? : string
+    roomID : string
 }
 function WordSection({socket, enabled, roomID}: Props) {
     const [typeable, setTypeable] = useState(false)
-    const [roomId, setRoomID] = useState('')
+    const [roomId, setRoomID] = useState<string>("")
     const [currentword, setCurrentWord] = useState("")
     useEffect(() => {
     setTypeable(enabled)
@@ -47,7 +47,7 @@ function WordSection({socket, enabled, roomID}: Props) {
 
   return (
     <>
-    {typeable? <Enabled socket={socket} roomID={roomID}/> : <Disabled/>}
+    {typeable? <Enabled socket={socket} roomID={roomId}/> : <Disabled/>}
     </>
   )
 
@@ -57,7 +57,7 @@ function WordSection({socket, enabled, roomID}: Props) {
 function Enabled({socket, roomID}: EnabledProps) {
 
     const [playerWord, setPlayerWord] = useState("")
-    const [roomId, setRoomID] = useState('')
+    const [roomId, setRoomID] = useState<string>("")
 
 
     useEffect(() => {
@@ -72,8 +72,8 @@ function Enabled({socket, roomID}: EnabledProps) {
     }, [playerWord])
 
     useEffect(() => {
-            setRoomID(socket.id.slice(-6))
-    }, [roomID])
+            setRoomID(roomID)
+    }, [])
     
     function changeText(e: React.FormEvent<HTMLInputElement>) {
         const text = e.currentTarget.value
