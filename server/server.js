@@ -34,7 +34,7 @@ class GameTurns{
     PassTurn() {
         while (true) {
             let nextTurn = this.turnCounter+1>this.turnArray.length-1? this.turnCounter+1 : 0;
-            
+            console.log("i got executed")
             if (this.turnArray[nextTurn] != deadString) {
                 let obj = {
                  id: this.turnArray[nextTurn],
@@ -212,7 +212,7 @@ io.on('connection', (socket) => {
     socket.on('request-submit-word',(user_word, roomID) => {
         
         const word = user_word.toLowerCase()
-        console.log(roomID)
+        console.log(word)
         const syllable =  gamesMap.get(roomID).syllable
         const containsBool = word.includes(syllable)
         if (containsBool) {
@@ -221,15 +221,15 @@ io.on('connection', (socket) => {
                 console.log('word found')
                  //TODO : pass the turn to next person
                  let nextObj = gamesMap.get(roomID).PassTurn()
-                 let nextPerson = nextObj.nextPerson
-                 let nextIndex = nextObj.nextIndex
+                 let nextPerson = nextObj.id
+                 let nextIndex = nextObj.index
+                
+                 let nextSyllable = gamesMap.get(roomID).GenerateSyllable()
 
-                 let randomsyllableId = Math.floor(Math.random() * syllables.length);
-                 let currentSyllable = syllables[randomsyllableId]
 
-
-                io.to(roomID).emit('play-wait',currentSyllable, nextIndex);
-                io.to(nextPerson).emit('play-type',currentSyllable, nextIndex)
+                console.log(nextPerson)
+                io.to(roomID).emit('play-wait',nextSyllable, nextIndex);
+                io.to(nextPerson).emit('play-type',nextSyllable, nextIndex);
             }
             else {
                 console.log('no word found, correct syllable')
