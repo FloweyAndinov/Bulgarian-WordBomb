@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Socket } from 'socket.io-client'
 import styles from "../WordSection/WordSection.module.scss"
 
@@ -7,14 +7,14 @@ interface Props {
     enabled : boolean
     word : string
     playerword : string
-    roomID? : string
+    roomIDProp : string
 }
 
 interface EnabledProps {
     socket : Socket
-    roomID : string
+    roomIDProp : string
 }
-function WordSection({socket, enabled, roomID}: Props) {
+function WordSection({socket, enabled, roomIDProp}: Props) {
     const [typeable, setTypeable] = useState(false)
     const [roomId, setRoomID] = useState<string>("")
     const [currentword, setCurrentWord] = useState("")
@@ -25,13 +25,8 @@ function WordSection({socket, enabled, roomID}: Props) {
     },[enabled])
     
     useEffect(() => {
-        if (roomID !=null) {
-            setRoomID(roomID)
-        }
-        else {
-            setRoomID(socket.id.slice(-6))
-        }
-    }, [roomID])
+        setRoomID(roomIDProp)
+    }, [roomIDProp])
 
     // socket.on('recieve-player-word', (word : string) => {
     //     setPlayerWord(word)
@@ -47,21 +42,21 @@ function WordSection({socket, enabled, roomID}: Props) {
 
   return (
     <>
-    {typeable? <Enabled socket={socket} roomID={roomId}/> : <Disabled/>}
+    {typeable? <Enabled socket={socket} roomIDProp={roomId}/> : <Disabled/>}
     </>
   )
 
   
 }
 
-function Enabled({socket, roomID}: EnabledProps) {
+function Enabled({socket, roomIDProp}: EnabledProps) {
 
     const [playerWord, setPlayerWord] = useState("")
     const [roomId, setRoomID] = useState<string>("")
-
-
+    const inputTextRef = useRef<HTMLInputElement | null>(null);
     useEffect(() => {
-        console.log(roomID? 'found' : 'not found')
+       
+        console.log(roomIDProp? 'id found' : 'id not found')
         window.addEventListener('keydown', submitWordtoServer);
 
         return () => {
@@ -72,7 +67,7 @@ function Enabled({socket, roomID}: EnabledProps) {
     }, [playerWord])
 
     useEffect(() => {
-            setRoomID(roomID)
+            setRoomID(roomIDProp)
     }, [])
     
     function changeText(e: React.FormEvent<HTMLInputElement>) {
@@ -87,13 +82,18 @@ function Enabled({socket, roomID}: EnabledProps) {
         //not implemented - socket.emit('send-player-word', word)
     };
   
+
     
     const submitWordtoServer = (event: KeyboardEvent) => {
+        // event.preventDefault();
         const wordToSend = playerWord
-        if (event.key === 'Enter') {
-            console.log(wordToSend , 'trying to send');
+        if (event.key === 'Enter' && wordToSend.trim()) {
             // console.log(roomId)
                 socket.emit('request-submit-word', wordToSend, roomId)
+                if (inputTextRef.current) {
+                    inputTextRef.current.value = '';
+                    inputTextRef.current.focus()
+                }
           }
     };
     
@@ -102,9 +102,9 @@ function Enabled({socket, roomID}: EnabledProps) {
     return (
         <>
         <div>
-        <span className={styles.textInput}>Press Enter to send</span>
+        <span className={styles.textInput} >Press Enter to send</span>
         <br/>
-            <input onChange={changeText}/>
+            <input ref={inputTextRef} onChange={changeText}/>
         </div>
         </>
     )

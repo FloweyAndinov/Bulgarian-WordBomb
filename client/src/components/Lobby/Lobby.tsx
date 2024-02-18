@@ -65,7 +65,7 @@ function Lobby( {socket , isOwner, roomIDProp ='errorroomID'}: Props) {
 
   return (
     <>
-    {startGame ? <Game socket={socket} isOwner={isOwner} roomIDProp={roomIDProp}/> : 
+    {startGame ? <Game socket={socket} isOwner={isOwner} roomIDProp={roomID}/> : 
     <div>
     <div>Create</div>
     <div>{roomID}</div>

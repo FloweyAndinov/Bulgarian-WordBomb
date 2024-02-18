@@ -9,7 +9,7 @@ import arrowPicture from '../../assets/arrow.png'
 interface Props {
   socket: Socket;
   isOwner: boolean;
-  roomIDProp?: string;
+  roomIDProp: string;
 }
 
 function Game({socket , isOwner, roomIDProp} : Props) {
@@ -20,14 +20,21 @@ function Game({socket , isOwner, roomIDProp} : Props) {
   const [playerWord, setPlayerWord] = useState("")
   const [arrowAngle, setArrowAngle] = useState(0)
   const [playerList, setPlayerList] = useState<Array<string>>([])
+  const [roomID, setRoomID] = useState("")
 
   useEffect(() => {
+
+
 
     
     const id = socket.id.slice(-6)
     if (isOwner) {
       socket.emit('start-game', id)
     }
+
+    
+
+
     //event for *play word* and *wait for word*
     socket.on('play-type', (serverWord : string, playerAngle : number) => {
       setPlayType(true)
@@ -71,6 +78,11 @@ function Game({socket , isOwner, roomIDProp} : Props) {
 
   }, [])
 
+  useEffect(() => {
+    setRoomID(roomIDProp)
+  }, [roomIDProp])
+
+
   const playerStyle  = (index : number) : CSSProperties => ({
     position: 'absolute',
     width: 'max-content',
@@ -84,6 +96,11 @@ function Game({socket , isOwner, roomIDProp} : Props) {
     
     <>
     <div>Game</div>
+    <div>
+      <span>{roomID} : room ID</span>
+      <br />
+      <span>{socket.id.slice(-6)} : user ID</span>
+    </div>
     <div className={styles.container}>
 
     <div style={{position:'absolute', width:'max-content', height:'100px', left:'-120%', top:'11vh', }}>
@@ -117,7 +134,7 @@ function Game({socket , isOwner, roomIDProp} : Props) {
     
     
     <div className={styles.textsend}>
-      <WordSection socket={socket} enabled={playType} word={word} playerword={playerWord} roomID={roomIDProp} />
+      <WordSection socket={socket} enabled={playType} word={word} playerword={playerWord} roomIDProp={roomID} />
       </div>
     </>
   )
