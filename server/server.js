@@ -17,9 +17,9 @@ const syllablesPath = 'words.csv';
 let syllables = [];
 
 class GameTurns{
-    constructor(turnArray, turnCounter) {
+    constructor(turnArray) {
         this.turnArray = turnArray
-        this.turnCounter = turnCounter
+        this.turnCounter = Math.floor(Math.random() * turnArray.length);
         let randomsyllableId = Math.floor(Math.random() * syllables.length);
         this.syllable = syllables[randomsyllableId]
     }
@@ -33,13 +33,14 @@ class GameTurns{
     }
     PassTurn() {
         while (true) {
-            let nextTurn = this.turnCounter+1>this.turnArray.length-1? this.turnCounter+1 : 0;
-            console.log("i got executed")
+            let nextTurn = this.turnCounter!=this.turnArray.length-1? this.turnCounter + 1 : 0;
+            
             if (this.turnArray[nextTurn] != deadString) {
                 let obj = {
                  id: this.turnArray[nextTurn],
                  index: nextTurn
-                }
+            }
+                this.turnCounter = nextTurn
                 return obj
             }
 
@@ -154,23 +155,25 @@ io.on('connection', (socket) => {
         io.to(roomID).emit('recieve-players-names', namesArray)
 
         //choose random id
-        const randomIndex = Math.floor(Math.random() * ids.length);
-        const randomplayerId = ids[randomIndex];
+        // const randomIndex = Math.floor(Math.random() * ids.length);
+        // const randomplayerId = ids[randomIndex];
 
         const aliveArray = Array.from(room);
-        gamesMap.set(roomID, new GameTurns(aliveArray, randomplayerId))
+        gamesMap.set(roomID, new GameTurns(aliveArray))
         console.log(gamesMap.get(roomID), ' ', roomID)
         // currentsyllableMap.set(roomID , currentSyllable);
         let currentSyllable = gamesMap.get(roomID).syllable
+        let currentPlayerIndex = gamesMap.get(roomID).turnCounter
+        let currentPlayer = gamesMap.get(roomID).turnArray[currentPlayerIndex]
 
         //send each id the appropriate event
         ids.forEach(id => {
-            if (id !== randomplayerId) {
+            if (id !== currentPlayer) {
               // Send event to all IDs except the special one
-              io.to(id).emit('play-wait', currentSyllable, 0); //TODO : dynamic player angle
+              io.to(id).emit('play-wait', currentSyllable, currentPlayerIndex); //TODO : dynamic player angle
             } else {
               // Send different event to the special ID
-              io.to(randomplayerId).emit('play-type', currentSyllable, 0); //TODO : dynamic player angle
+              io.to(currentPlayer).emit('play-type', currentSyllable, currentPlayerIndex); //TODO : dynamic player angle
             }
           });
 
