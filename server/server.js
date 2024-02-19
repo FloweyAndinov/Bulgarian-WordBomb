@@ -28,7 +28,11 @@ class GameTurns{
         this.syllable = syllables[randomsyllableId]
         return this.syllable
     }
-    RemovePlayer(index) {
+    RemovePlayerByIndex(index) {
+        this.turnArray[index] = deadString
+    }
+    RemovePlayerByID(id) {
+        const index = this.turnArray.findIndex(element => element === id);
         this.turnArray[index] = deadString
     }
     PassTurn() {
@@ -54,6 +58,7 @@ class GameTurns{
                 counter++;
             }
         )
+        console.log(counter , "counter for players")
         return counter <=1 ? true : false
     }
 }
@@ -324,17 +329,15 @@ function GetNameArray(ids) {
 
 function RemoveAlive(roomID, deadID) {
    
-    if (aliveMap[roomID] == null) return 
-    let elementIndex = aliveMap[roomID].indexOf(deadID);
-    if (elementIndex !== -1) {
-        gamesMap.get(roomID).RemovePlayer(elementIndex)
-    }
-    console.log("check for game end")
-    let gameEnded = gamesMap.get(roomID).CheckEnd
+    if (gamesMap.get(roomID) == null) return 
     
-    if (gameEnded) {
-        io.to(roomID).emit('send-lobby')
+    gamesMap.get(roomID).RemovePlayerByID(deadID)
+
+    if (gamesMap.get(roomID).CheckEnd() === true) {
+        console.log("sending player/s to lobby")
+        io.to(roomID).emit('send-lobby');
     }
+
 }
 
 
