@@ -121,8 +121,10 @@ io.on('connection', (socket) => {
     });
 
     socket.on('join-room-window', (room) => {
-        socket.join(room);
-        socket.emit('joined-room-window', room);
+        if (io.sockets.adapter.rooms.get(room)) {
+            socket.join(room);
+            socket.emit('joined-room-window', room);
+        }
     });
 
     socket.on('join-room', (room) => {

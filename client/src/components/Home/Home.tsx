@@ -27,9 +27,13 @@ function Home( {socket}: Props) {
             
             if (query?.trim()!=null) {
                 console.log("query is not null!!")
-                setShowJoinInvite(true)
+                socket.emit('join-room-window', query);
             }
-        });      
+        });
+        
+        socket.on('joined-room-window' , () => {
+            ActivateJoinInvite()
+        })
     }, [socket]);
 
     const handleInputChange = (e : React.ChangeEvent<HTMLInputElement>) => {
@@ -40,15 +44,17 @@ function Home( {socket}: Props) {
         socket.emit('set-name' , nameText)
     }
 
+    function ActivateJoinInvite() {
+        setShowJoinInvite(true)
+    }
+
     if (showJoin) {
         return <Join />;
     }
 
     if (showJoinInvite) {
-        if (query) {
-        socket.emit('join-room-window', query);
+        if (query) 
         return <Lobby socket={socket} isOwner={false} roomIDProp={query}/>
-        }
     }
 
     if (showCreate) {
