@@ -4,6 +4,7 @@ const cors = require('cors');
 const fs = require('fs');
 const csv = require('csv-parser');
 const path = require('path');
+const Timeout = require('timeout-refresh')
 
 
 const io = require('socket.io')(3000, {
@@ -22,6 +23,8 @@ class GameTurns{
         this.turnCounter = Math.floor(Math.random() * turnArray.length);
         let randomsyllableId = Math.floor(Math.random() * syllables.length);
         this.syllable = syllables[randomsyllableId]
+        this.turnTimer = 5000;
+        this.turnTimeout = null
     }
     GenerateSyllable() {
         let randomsyllableId = Math.floor(Math.random() * syllables.length);
@@ -39,7 +42,7 @@ class GameTurns{
     PassTurn() {
         while (true) {
             let nextTurn = this.turnCounter!=this.turnArray.length-1? this.turnCounter + 1 : 0;
-            
+            console.log(nextTurn)
             if (this.turnArray[nextTurn] != deadString) {
                 let obj = {
                  id: this.turnArray[nextTurn],
@@ -48,7 +51,8 @@ class GameTurns{
                 this.turnCounter = nextTurn
                 return obj
             }
-            this.turnCounter++;
+            this.turnCounter = nextTurn
+           
         }
     }
     CheckEnd() {
@@ -59,7 +63,7 @@ class GameTurns{
                 counter++;
             }
         )
-        console.log(counter , "counter for players")
+        //console.log(counter , "counter for players")
         return counter <=1 ? true : false
     }
 }
@@ -73,7 +77,7 @@ const deadString = '______' //this replaces id when player dies
 const stream = fs.createReadStream(syllablesPath, { encoding: 'utf-8' })
 
 stream.on('error', (error) => {
-    console.error('Error opening the file:', error);
+    //console.error('Error opening the file:', error);
 });
 
 
@@ -81,7 +85,7 @@ stream.on('error', (error) => {
 
 // Handle 'open' event
 stream.on('open', () => {
-    // console.log('File found. Reading data...');
+    // //console.log('File found. Reading data...');
 
     // Pipe the stream to the CSV parser
     stream.pipe(csv())
@@ -89,10 +93,10 @@ stream.on('open', () => {
             syllables.push(Object.values(data)[0]);
         })
         .on('end', () => {
-            // console.log('CSV data loaded:', syllables);
+            // //console.log('CSV data loaded:', syllables);
         })
         .on('error', (error) => {
-            console.error('Error parsing CSV:', error);
+            //console.error('Error parsing CSV:', error);
         });
 });
 
@@ -106,19 +110,19 @@ function checkStringInFile(wordsPath, searchString) {
 
 
 io.on('connection', (socket) => {
-    console.log(socket.id);
+    //console.log(socket.id);
     debugUserCount()
 
     socket.on('get-rooms', () => {
         const rooms = io.sockets.adapter.rooms;
-        // console.log(rooms);
+        // //console.log(rooms);
 
         socket.emit('rooms', Array.from(rooms));
     });
 
     socket.on('set-name', (name) => {
         namesMap.set(socket.id, name);
-        console.log("name added")
+        //console.log("name added")
     })
 
     socket.on('create-room', (room) => {
@@ -134,7 +138,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('join-room', (room) => {
-        console.log(room); //find the room that called this function
+        //console.log(room); //find the room that called this function
         io.in(room).emit('user-connected', room);
     });
 
@@ -154,12 +158,33 @@ io.on('connection', (socket) => {
         io.to(roomID).emit('send-game-screen');
     });
 
+    function TimedOutTurn(roomID) {
+        gamesMap.get(roomID).RemovePlayerByIndex(gamesMap.get(roomID).turnCounter)
+
+        if (gamesMap.get(roomID).CheckEnd()) {
+            gamesMap.get(roomID).turnTimeout.destroy()
+            gamesMap.delete(roomID)
+            console.log("game ended")
+            io.to(roomID).emit('send-lobby');
+            return
+        }
+            
+        let nextObj = gamesMap.get(roomID).PassTurn()
+        let nextPerson = nextObj.id
+        let nextIndex = nextObj.index
+        let nextSyllable = gamesMap.get(roomID).GenerateSyllable()
+
+        io.to(roomID).emit('play-wait',nextSyllable, nextIndex);
+        io.to(nextPerson).emit('play-type',nextSyllable, nextIndex);
+        console.log("passed turn")
+    }
+
     socket.on('start-game', (roomID) => {
         const room = io.sockets.adapter.rooms.get(roomID);
         const ids = Array.from(room);
 
         let namesArray = GetNameArray(ids)
-        console.log(namesArray, 'are being sent')
+        //console.log(namesArray, 'are being sent')
         io.to(roomID).emit('recieve-players-names', namesArray)
 
         //choose random id
@@ -168,7 +193,7 @@ io.on('connection', (socket) => {
 
         const aliveArray = Array.from(room);
         gamesMap.set(roomID, new GameTurns(aliveArray))
-        console.log(gamesMap.get(roomID), ' ', roomID)
+        //console.log(gamesMap.get(roomID), ' ', roomID)
         // currentsyllableMap.set(roomID , currentSyllable);
         let currentSyllable = gamesMap.get(roomID).syllable
         let currentPlayerIndex = gamesMap.get(roomID).turnCounter
@@ -177,60 +202,30 @@ io.on('connection', (socket) => {
         //send each id the appropriate event
         ids.forEach(id => {
             if (id !== currentPlayer) {
-              // Send event to all IDs except the special one
-              io.to(id).emit('play-wait', currentSyllable, currentPlayerIndex); //TODO : dynamic player angle
+              io.to(id).emit('play-wait', currentSyllable, currentPlayerIndex); 
             } else {
-              // Send different event to the special ID
-              io.to(currentPlayer).emit('play-type', currentSyllable, currentPlayerIndex); //TODO : dynamic player angle
+              io.to(currentPlayer).emit('play-type', currentSyllable, currentPlayerIndex); 
             }
           });
 
-          
+        gamesMap.get(roomID).turnTimeout = Timeout.on(gamesMap.get(roomID).turnTimer, function () {
+            TimedOutTurn(roomID)
+        })
         
-        //game: cycle ids, force current id to type word, others to wait
-
-        
-        // io.sockets.adapter.rooms.forEach(function(room){
-        //     console.log(room)
-        //     RemoveAlive(room, socket.id)
-        // });
-    })
-
-    
-    
-   
-    // socket.on('request-syllable', () => {
-    //     let client_inTurn = 0 // needs parameter
-    //     const random = Math.floor(Math.random() * syllables.length);
-    //     let syllable = syllables[random]
-    //     io.to(roomID).emit('send-syllable', client_inTurn, syllable); //send it to all, let only one client fill the word
-        
-    // })
-    socket.on('request-word-check', (user_word, syllable) => {
-        //check the word
-        
-
-        const word = user_word.toLowerCase()
-        const containsBool = word.includes(syllable)
-        if (containsBool) {
-            io.to(roomID).emit('accept-word');// add to client option to press enter to submit
-        }
-        else {
-            io.to(roomID).emit('deny-word');  //remove option from client to submit word
-        }
+       
     })
 
     socket.on('request-submit-word',(user_word, roomID) => {
         
+
         const word = user_word.toLowerCase()
-        console.log(word)
+        //console.log(word)
         const syllable =  gamesMap.get(roomID).syllable
         const containsBool = word.includes(syllable)
         if (containsBool) {
             const found = checkStringInFile(wordsPath, word)
             if (found) {
-                console.log('word found')
-                 //TODO : pass the turn to next person
+                gamesMap.get(roomID).turnTimeout.refresh()
                  let nextObj = gamesMap.get(roomID).PassTurn()
                  let nextPerson = nextObj.id
                  let nextIndex = nextObj.index
@@ -238,12 +233,12 @@ io.on('connection', (socket) => {
                  let nextSyllable = gamesMap.get(roomID).GenerateSyllable()
 
 
-                console.log(nextPerson)
+                //console.log(nextPerson)
                 io.to(roomID).emit('play-wait',nextSyllable, nextIndex);
                 io.to(nextPerson).emit('play-type',nextSyllable, nextIndex);
             }
             else {
-                console.log('no word found, correct syllable')
+                //console.log('no word found, correct syllable')
                 //TODO : flash the user red text (to indicate fail)
             }
         }
@@ -259,9 +254,9 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         namesMap.delete(socket.id) // won't throw error if doesn't exist
         io.sockets.adapter.rooms.forEach((value, key) => {
-            console.log(`Key: ${key}, Value: ${Array.from(value).length}`);
+            //console.log(`Key: ${key}, Value: ${Array.from(value).length}`);
             if (key.length===6) {
-                console.log(key + " attempting to remove user")
+                //console.log(key + " attempting to remove user")
                 RemoveAlive(key, socket.id)
             }
           });
@@ -283,27 +278,27 @@ io.on('connection', (socket) => {
 
 setInterval(() => {
     // const connectedSockets = io.sockets.sockets.size;
-    // console.log(`Number of connected sockets: ${connectedSockets}`);
+    // //console.log(`Number of connected sockets: ${connectedSockets}`);
     // io.sockets.adapter.rooms.forEach((value, key) => {
-    //     console.log(`Key: ${key}, Value: ${Array.from(value).length}`);
+    //     //console.log(`Key: ${key}, Value: ${Array.from(value).length}`);
     //     if (key.length===6) {
-    //         console.log("i see a room")
+    //         //console.log("i see a room")
     //     }
     //   });
     
     // io.sockets.adapter.rooms.forEach((key, value) => {
-    //   console.log(`Room ${key} has ${value.length} users`);
+    //   //console.log(`Room ${key} has ${value.length} users`);
     // });
         
 }, 5000);
 
 function debugUserCount() {
     const connectedSockets = io.sockets.sockets.size;
-    console.log(`Number of connected sockets: ${connectedSockets}`);
+    //console.log(`Number of connected sockets: ${connectedSockets}`);
 }
 
 function GetNameArray(ids) {
-    console.log(ids)
+    //console.log(ids)
     let namesArr = []
     ids.forEach(element => {
         
@@ -322,8 +317,8 @@ function GetNameArray(ids) {
 
 // function ResetAlive(roomID, resetArray, randomplayerId) {
 //         // aliveMap[roomID] = resetArray
-//         // console.log(aliveMap[roomID])
-//         // console.log(roomID)
+//         // //console.log(aliveMap[roomID])
+//         // //console.log(roomID)
         
 
 // }
@@ -335,7 +330,7 @@ function RemoveAlive(roomID, deadID) {
     gamesMap.get(roomID).RemovePlayerByID(deadID)
 
     if (gamesMap.get(roomID).CheckEnd() === true) {
-        console.log("sending player/s to lobby")
+        //console.log("sending player/s to lobby")
         io.to(roomID).emit('send-lobby');
     }
 
