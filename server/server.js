@@ -48,7 +48,7 @@ class GameTurns{
                 this.turnCounter = nextTurn
                 return obj
             }
-
+            this.turnCounter++;
         }
     }
     CheckEnd() {
