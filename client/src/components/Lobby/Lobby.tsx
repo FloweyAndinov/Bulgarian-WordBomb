@@ -62,6 +62,12 @@ function Lobby( {socket , isOwner, roomIDProp ='error_room_ID'}: Props) {
       return idindex == index ? true : false
     }
 
+    function CopyInviteLink() {
+      let baseurl = window.location.href.split('?')[0];
+      let invitelink = baseurl + '?id=' + roomID
+      navigator.clipboard.writeText(invitelink)
+    }
+
 
   return (
     <>
@@ -75,6 +81,9 @@ function Lobby( {socket , isOwner, roomIDProp ='error_room_ID'}: Props) {
         ))}
     </ul>
     {isOwner ? <button onClick={() => socket.emit('send-game-screen', roomID)}>Start Game</button> : <></>}
+    <div>
+      <button onClick={() => {CopyInviteLink()}}> Copy Invite Link</button>
+    </div>
     </div>
 }
     </>
