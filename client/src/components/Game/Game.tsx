@@ -95,6 +95,7 @@ function Game({socket , isOwner, roomIDProp} : Props) {
   return (
     
     <>
+    
     <div>Game</div>
     <div>
       <span>{roomID} : room ID</span>
@@ -109,7 +110,7 @@ function Game({socket , isOwner, roomIDProp} : Props) {
       <span style={{color: 'red'}}>{word}</span>
     </div>
 
-    <div className={styles.arrowpic} style={{position: 'absolute', left : '4vh', top: '-4vh',transformOrigin: 'center left',  transform: `rotate(${arrowAngle * 45}deg)`}}>
+    <div className={styles.arrowpic} style={{position: 'absolute', left : '4vh', top: '-4vh',transformOrigin: 'center left',  transform: `rotate(${arrowAngle * 45}deg)`, zIndex:'-10', opacity:'30%'}}>
       <img src={arrowPicture} alt="arrow" style={{width : '15vh', height: '15vh'}}/>
     </div>
 
