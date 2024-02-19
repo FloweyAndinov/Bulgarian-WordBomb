@@ -33,6 +33,7 @@ class GameTurns{
     }
     RemovePlayerByID(id) {
         const index = this.turnArray.findIndex(element => element === id);
+        if (index != -1)
         this.turnArray[index] = deadString
     }
     PassTurn() {
