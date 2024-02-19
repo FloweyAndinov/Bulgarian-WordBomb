@@ -95,6 +95,10 @@ function Enabled({socket, roomIDProp}: EnabledProps) {
                     inputTextRef.current.focus()
                 }
           }
+        if (event.code === 'Space') {
+            event.preventDefault();
+        }
+        
     };
     
 
