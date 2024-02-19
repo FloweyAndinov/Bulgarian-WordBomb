@@ -7,7 +7,7 @@ interface Props {
     isOwner: boolean;
     roomIDProp?: string;
 }
-function Lobby( {socket , isOwner, roomIDProp ='errorroomID'}: Props) {
+function Lobby( {socket , isOwner, roomIDProp ='error_room_ID'}: Props) {
     const [roomID, setRoomID] = useState<string>('');
     const [ids, setIds] = useState<string[]>([]);
     const [names, setNames] = useState<string[]>([]);
