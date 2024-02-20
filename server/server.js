@@ -25,6 +25,7 @@ class GameTurns{
         this.syllable = syllables[randomsyllableId]
         this.turnTimer = 5000;
         this.turnTimeout = null
+        this.usedWords = []
     }
     GenerateSyllable() {
         let randomsyllableId = Math.floor(Math.random() * syllables.length);
@@ -39,7 +40,31 @@ class GameTurns{
         if (index != -1)
         this.turnArray[index] = deadString
     }
-    PassTurn() {
+    PassTurn(used_word) {
+        if (used_word == 'fail') {
+            return this.GetNextTurn() //user didn't submit word
+        }
+        else if (this.usedWords.indexOf(used_word) != -1) {
+            return false; //user submit used word
+        }
+        else {
+            this.usedWords.push(used_word) // user submits new word
+            return this.GetNextTurn()
+        }
+    }
+    CheckEnd() {
+        let counter = 0;
+        this.turnArray.forEach(
+            player => {
+                if (player!=deadString)
+                counter++;
+            }
+        )
+        //console.log(counter , "counter for players")
+        return counter <=1 ? true : false
+    }
+
+    GetNextTurn() {
         while (true) {
             let nextTurn = this.turnCounter!=this.turnArray.length-1? this.turnCounter + 1 : 0;
             console.log(nextTurn)
@@ -54,17 +79,6 @@ class GameTurns{
             this.turnCounter = nextTurn
            
         }
-    }
-    CheckEnd() {
-        let counter = 0;
-        this.turnArray.forEach(
-            player => {
-                if (player!=deadString)
-                counter++;
-            }
-        )
-        //console.log(counter , "counter for players")
-        return counter <=1 ? true : false
     }
 }
 
@@ -169,7 +183,7 @@ io.on('connection', (socket) => {
             return
         }
             
-        let nextObj = gamesMap.get(roomID).PassTurn()
+        let nextObj = gamesMap.get(roomID).PassTurn('fail')
         let nextPerson = nextObj.id
         let nextIndex = nextObj.index
         let nextSyllable = gamesMap.get(roomID).GenerateSyllable()
@@ -225,17 +239,19 @@ io.on('connection', (socket) => {
         if (containsBool) {
             const found = checkStringInFile(wordsPath, word)
             if (found) {
-                gamesMap.get(roomID).turnTimeout.refresh()
-                 let nextObj = gamesMap.get(roomID).PassTurn()
-                 let nextPerson = nextObj.id
-                 let nextIndex = nextObj.index
-                
-                 let nextSyllable = gamesMap.get(roomID).GenerateSyllable()
-
-
-                //console.log(nextPerson)
-                io.to(roomID).emit('play-wait',nextSyllable, nextIndex);
-                io.to(nextPerson).emit('play-type',nextSyllable, nextIndex);
+                let nextObj = gamesMap.get(roomID).PassTurn(user_word)
+                if (nextObj != false) {
+                    gamesMap.get(roomID).turnTimeout.refresh()
+                    let nextPerson = nextObj.id
+                    let nextIndex = nextObj.index
+                   
+                    let nextSyllable = gamesMap.get(roomID).GenerateSyllable()
+   
+   
+                   //console.log(nextPerson)
+                   io.to(roomID).emit('play-wait',nextSyllable, nextIndex);
+                   io.to(nextPerson).emit('play-type',nextSyllable, nextIndex);
+                }
             }
             else {
                 //console.log('no word found, correct syllable')
