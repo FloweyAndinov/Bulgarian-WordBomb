@@ -181,6 +181,7 @@ io.on('connection', (socket) => {
             gamesMap.delete(roomID)
             console.log("game ended")
             io.to(roomID).emit('send-lobby');
+            io.in(roomID).socketsLeave(roomID);
             return
         }
             
@@ -281,7 +282,8 @@ io.on('connection', (socket) => {
 
     socket.on('delete-room', (roomId) => {
         io.to(roomId).emit('send-lobby');
-        socket.leave(roomId)
+        io.in(roomID).socketsLeave(roomId);
+
     });
     socket.on('user-disconnect', (roomID) => {
         RemoveAlive(roomID, socket.id)
@@ -348,7 +350,10 @@ function RemoveAlive(roomID, deadID) {
 
     if (gamesMap.get(roomID).CheckEnd() === true) {
         //console.log("sending player/s to lobby")
+        
         io.to(roomID).emit('send-lobby');
+        io.in(roomID).socketsLeave(roomID);
+
     }
 
 }
