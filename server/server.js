@@ -49,6 +49,7 @@ class GameTurns{
         }
         else {
             this.usedWords.push(used_word) // user submits new word
+            if (this.turnTimer <=2000) this.turnTimer -= 25;
             return this.GetNextTurn()
         }
     }
