@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 import {
     Carousel,
@@ -23,6 +23,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { socket } from '@/socket';
 import Lobby from '@/components/Lobby/Lobby';
+import { Input } from '../ui/input';
 
 interface props {
     callParentFunction : () => void
@@ -32,6 +33,7 @@ const JoinButton = ({callParentFunction} : props) => {
 
     const [rooms, setRooms] = React.useState<Map<string, Set<string>>>(new Map());
     const counter = useRef(0);
+    const [nameText, setNameText] = useState('');
   
 
     useEffect(() => {
@@ -48,6 +50,21 @@ const JoinButton = ({callParentFunction} : props) => {
         function JoinRoom (roomID: string) {
             socket.emit('join-room-window', roomID);
          
+        }
+
+        const handleInputChange = (e : React.ChangeEvent<HTMLInputElement>) => {
+            setNameText(e.target.value);
+          };
+
+        function HasLength() {
+            if (nameText.length < 3) {
+                return true
+            }
+            return false
+        }
+
+        function SetName() {
+            socket.emit('set-name' , nameText)
         }
 
         
@@ -67,9 +84,33 @@ const JoinButton = ({callParentFunction} : props) => {
     <>
     {Array.from(rooms.entries()).filter(([roomId, roomSet]) => Array.from(roomSet)[0].length === 6)
             .map(([roomId, roomSet], index) => (
-              <Button key={roomId} onClick={() => {JoinRoom(Array.from(roomSet)[0]); console.log('sent join')}}>
-                  Join {Array.from(roomSet)[0]}
-              </Button>
+    <AlertDialog>
+
+
+    <AlertDialogTrigger asChild>
+        <Button key={roomId}>
+        Join {Array.from(roomSet)[0]}
+        </Button>
+    </AlertDialogTrigger>
+
+
+    <AlertDialogContent>
+        <AlertDialogHeader>
+            <AlertDialogTitle className="pl-1">Choose your name</AlertDialogTitle>
+                <AlertDialogDescription className="pt-1">
+                <Input type="text" placeholder="Write your name here" onChange={handleInputChange}/>
+                </AlertDialogDescription>
+        </AlertDialogHeader>
+
+
+    <AlertDialogFooter>
+        <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction disabled={HasLength()} onClick={() => {SetName(); JoinRoom(Array.from(roomSet)[0])}}>Continue</AlertDialogAction>
+    </AlertDialogFooter>
+
+
+  </AlertDialogContent>    
+</AlertDialog>
         ))}
     </>
         
