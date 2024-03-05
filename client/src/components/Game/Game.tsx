@@ -1,10 +1,11 @@
-import React, { CSSProperties, useEffect, useState } from 'react'
+import React, { CSSProperties, useEffect, useRef, useState } from 'react'
 import { Socket } from 'socket.io-client';
 import WordSection from '../WordSection/WordSection';
 import Home from '../Home/Home';
 import styles from '../Game/Game.module.scss'
 import bombPicture from '../../assets/bomb.png'
 import arrowPicture from '../../assets/arrow.png'
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 interface Props {
   socket: Socket;
@@ -22,7 +23,13 @@ function Game({socket , isOwner, roomIDProp} : Props) {
   const [playerList, setPlayerList] = useState<Array<string>>([])
   const [roomID, setRoomID] = useState("")
 
+  
+
   useEffect(() => {
+
+    
+
+    
 
 
 
@@ -72,11 +79,13 @@ function Game({socket , isOwner, roomIDProp} : Props) {
 
     
   
-
+    
     // Attach an event listener for the beforeunload event
     window.addEventListener('beforeunload', handleBeforeUnload);
-
+    
   }, [])
+
+ 
 
   useEffect(() => {
     setRoomID(roomIDProp)
@@ -84,9 +93,9 @@ function Game({socket , isOwner, roomIDProp} : Props) {
 
 
   const playerStyle  = (index : number) : CSSProperties => ({
-    position: 'absolute',
+    position: 'fixed',
     width: 'max-content',
-    transform: `rotate(${index * 45}deg) translate(20vh) rotate(-${index * 45}deg)`
+    transform: `translate(-50%, -50%) rotate(${index * 45}deg) translate(clamp(5rem, 20vw, 20rem)) rotate(-${index * 45}deg)`
   });
 
   if (showHome) {
@@ -102,35 +111,36 @@ function Game({socket , isOwner, roomIDProp} : Props) {
       <br />
       <span>{socket.id.slice(-6)} : user ID</span>
     </div>
-    <div className={styles.container}>
+    <div className='' style={{position:'fixed', height:'10em', width:'10em', top:'40vh', left:'50vw', display:'flex', transform:'translate(-50%, -50%)'}}>
+        
+        
+          <div className='self-center bg-orange-800' style={{}}>
+          <img src={bombPicture} className='self-center'/>
+            <img src={arrowPicture} alt="arrow" style={{position: 'absolute', left : '0', top: '0', transformOrigin: 'center left',  transform: `translate(45%, 5%) rotate(${arrowAngle * 45}deg)`, zIndex:'0', opacity:'30%', width : '15em', height: '10em', transition:'0.3s ease-in-out'}}/>
+          </div>
 
-    <div style={{position:'absolute', width:'max-content', height:'100px', left:'-120%', top:'11vh', }}>
-      <span style={{width: 'max-content'}}>Write a word that cointains</span>
-      <br />
-      <span style={{color: 'red'}}>{word}</span>
-    </div>
 
-    <div className={styles.arrowpic} style={{position: 'absolute', left : '4vh', top: '-4vh',transformOrigin: 'center left',  transform: `rotate(${arrowAngle * 45}deg)`, zIndex:'-10', opacity:'30%'}}>
-      <img src={arrowPicture} alt="arrow" style={{width : '15vh', height: '15vh'}}/>
-    </div>
-
-    <div className={styles.bombpic} style={{position: 'absolute', left : '-7vh', top: '-7vh'}}>
-      <img src={bombPicture} alt="bomb" style={{width : '20vh', height: '20vh'}}/>
-    </div>
-
-   
-    
-    <span style={{color:'transparent'}}>Player 0</span> {/*helps with positioning the image */}
-       <div className='players'>
+        
+        <div style={{position:'absolute', top:'50%', left:'50%'}}>
         {playerList.map((player, index) => (  
-
-        <div key={player} style={playerStyle(index)}>
+        <div className='' key={player} style={{display:'flex', flexDirection:'column', ...playerStyle(index)}}>
+          <Avatar className='mx-auto'>
+            <AvatarImage src="https://github.com/shadcn.png" />
+            <AvatarFallback>CN</AvatarFallback>
+          </Avatar>
           {player}
         </div>
-
         ))}
-       </div>
+        </div>
+        
       
+      <div className='flex flex-col' style={{position:'absolute', width:'max-content', height:'100px', top:'13em', left:'-1em'}}>
+        <span style={{width: 'max-content'}}>Write a word that cointains</span>
+        <br />
+        <span style={{color: 'red', textAlign:'center'}}>{word}</span>
+      </div>
+
+
     </div>
     
     

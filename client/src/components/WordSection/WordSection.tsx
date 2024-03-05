@@ -18,6 +18,9 @@ function WordSection({socket, enabled, roomIDProp}: Props) {
     const [typeable, setTypeable] = useState(false)
     const [roomId, setRoomID] = useState<string>("")
     const [currentword, setCurrentWord] = useState("")
+    
+
+   
     useEffect(() => {
     setTypeable(enabled)
     // console.log(enabled)
@@ -53,7 +56,7 @@ function Enabled({socket, roomIDProp}: EnabledProps) {
 
     const [playerWord, setPlayerWord] = useState("")
     const [roomId, setRoomID] = useState<string>("")
-    const inputTextRef = useRef<HTMLInputElement | null>(null);
+    const chars = useRef('')
     useEffect(() => {
        
         console.log(roomIDProp? 'id found' : 'id not found')
@@ -68,36 +71,41 @@ function Enabled({socket, roomIDProp}: EnabledProps) {
 
     useEffect(() => {
             setRoomID(roomIDProp)
+
+            window.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+          };
     }, [])
     
-    function changeText(e: React.FormEvent<HTMLInputElement>) {
-        const text = e.currentTarget.value
-        sendWordtoServer(text)
-        
-    }
-
-    const sendWordtoServer = (word: string) => {
-        setPlayerWord(word)
-        console.log(word)
-        //not implemented - socket.emit('send-player-word', word)
-    };
   
+    function handleKeyDown( event : KeyboardEvent) {
+        if (event.code == "Backspace") {
+          chars.current = chars.current.slice(0, -1)
+          setPlayerWord(chars.current)
+          return
+        }
+        if (event.code == "Space" || event.code == "Delete") {
+          chars.current = "";
+          setPlayerWord(chars.current)
+          return
+        }
+        if (event.key.length > 1)
+          return
+        chars.current = chars.current + event.key
+        setPlayerWord(chars.current)
+        
+      }
 
     
     const submitWordtoServer = (event: KeyboardEvent) => {
-        // event.preventDefault();
-        const wordToSend = playerWord
+        console.log("send word " + playerWord)
+        const wordToSend = playerWord;
         if (event.key === 'Enter' && wordToSend.trim()) {
-            // console.log(roomId)
-                socket.emit('request-submit-word', wordToSend, roomId)
-                if (inputTextRef.current) {
-                    inputTextRef.current.value = '';
-                    inputTextRef.current.focus()
-                }
+            console.log("i pressed enter")
+            socket.emit('request-submit-word', wordToSend, roomId)
           }
-        if (event.code === 'Space') {
-            event.preventDefault();
-        }
         
     };
     
@@ -105,11 +113,17 @@ function Enabled({socket, roomIDProp}: EnabledProps) {
        
     return (
         <>
-        <div>
         <span className={styles.textInput} >Press Enter to send</span>
         <br/>
-            <input ref={inputTextRef} onChange={changeText}/>
+
+        <div style={{display:'flex', height : '1.5em', justifyContent:'center'}}>
+        {playerWord.length < 1 ? 
+        <div style={{borderRadius : '5px', fontSize:'2em', width:'1em', height : '1.5em', backgroundColor : 'brown', textAlign:'center', margin:'0.1em'}}></div> :
+         playerWord.split('').map((char) => (
+        <div style={{borderRadius : '5px', fontSize:'2em', width:'1em', height : '1.5em', backgroundColor : 'brown', textAlign:'center', margin:'0.1em'}}> {char} </div>
+        ))}
         </div>
+            
         </>
     )
 }
