@@ -1,6 +1,9 @@
 @import '../../variables';
 
 .title {
+    position: fixed;
+    top : 5rem;
+    left : 10rem;
     font-size: 4rem;
     text-align: center;
     margin-top: 2rem;

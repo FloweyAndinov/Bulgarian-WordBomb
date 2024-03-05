@@ -7,6 +7,21 @@ import Join from '../Join/Join';
 import { Socket } from 'socket.io-client';
 import { Button } from "@/components/ui/button"
 
+
+import ThemeSwitch from '../ThemeSwitch/ThemeSwitch';
+import ConnectButton from '../ConnectButton/ConnectButton';
+
+
+
+import { Toaster } from "@/components/ui/sonner"
+import CreateButton from '../CreateButton/CreateButton';
+import Rules from '@/components/Rules/Rules';
+import JoinButton from '../JoinButton/JoinButton';
+import React from 'react';
+
+
+
+
 interface Props {
     socket: Socket;
 }
@@ -18,7 +33,10 @@ function Home( {socket}: Props) {
     const [showJoin, setShowJoin] = useState(false);
     const [showCreate, setShowCreate] = useState(false);
     const [showJoinInvite, setShowJoinInvite] = useState(false);
-    const [nameText, setNameText] = useState('');
+    const [roomID, setRoomID] = React.useState<string>('');
+    const [joinedRoom, setJoinedRoom] = React.useState<boolean>(false);
+
+    
     
     useEffect(() => {
         console.log(query)
@@ -34,22 +52,27 @@ function Home( {socket}: Props) {
         socket.on('joined-room-window' , () => {
             ActivateJoinInvite()
         })
+
+        socket.on('joined-room-window', (roomID) => {
+            
+            setJoinedRoom(true); 
+            setRoomID(roomID);
+            });
     }, [socket]);
 
-    const handleInputChange = (e : React.ChangeEvent<HTMLInputElement>) => {
-        setNameText(e.target.value);
-      };
+   function createRoom() {
+    setShowCreate(true) 
+   }
 
-    function SetName() {
-        socket.emit('set-name' , nameText)
-    }
-
+   if (showCreate) {
+    return <Lobby socket={socket} isOwner={true}/>
+}
     function ActivateJoinInvite() {
         setShowJoinInvite(true)
     }
 
-    if (showJoin) {
-        return <Join />;
+    if (joinedRoom) {
+       return <Lobby socket={socket} isOwner={false} roomIDProp={roomID}/> 
     }
 
     if (showJoinInvite) {
@@ -57,26 +80,31 @@ function Home( {socket}: Props) {
         return <Lobby socket={socket} isOwner={false} roomIDProp={query}/>
     }
 
-    if (showCreate) {
-        return <Lobby socket={socket} isOwner={true}/>
-    }
+    
   return (
     <>
-    
+
+        <div style={{position:'fixed', display:'flex', right:0 , marginRight:'5vw', marginTop: '1em'}}>
+      <ThemeSwitch/>
+      {/* <LanguageSwitch language="en" passLanguage={(language : string) => { ChangeLanguage(language)}} /> */}
+      
+      </div>
+      
+      <div style={{position: 'relative', display:'flex', flexDirection:'column', width:'20vw', left: '5vw', top: '30vh'}}>
+        <CreateButton socket={socket} callParentFunction={() => createRoom()}/>
+        <JoinButton callParentFunction={() => createRoom()}/>
+        <Rules/>
+        </div>
+
+
     <div className={styles.title}>
         WordBomb на български
     </div>
-    <div>
-        <span>Въведи си името тук</span>
-        <input type="text" onChange={handleInputChange}/>
-        <button onClick={SetName}>Сложи</button>
-    </div>
-    <div className={styles.actionButtons}>
-        <button className='!text-red-500' onClick={() => setShowCreate(true)}>Create</button>
-        <button onClick={() => setShowJoin(true)}>Join</button>
-        <Button variant="outline">Button</Button>
-    </div>
     
+    <div style={{position: 'fixed', float:'right', right: '5vw', bottom: '5vh'}}>
+      <ConnectButton/>
+      </div>
+      <Toaster />
     </>
     
   )
