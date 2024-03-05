@@ -5,7 +5,7 @@ import styles from './Home.module.scss'
 import Lobby from '../Lobby/Lobby';
 import Join from '../Join/Join';
 import { Socket } from 'socket.io-client';
-import Game from '../Game/Game';
+import { Button } from "@/components/ui/button"
 
 interface Props {
     socket: Socket;
@@ -72,8 +72,9 @@ function Home( {socket}: Props) {
         <button onClick={SetName}>Сложи</button>
     </div>
     <div className={styles.actionButtons}>
-        <button onClick={() => setShowCreate(true)}>Create</button>
+        <button className='!text-red-500' onClick={() => setShowCreate(true)}>Create</button>
         <button onClick={() => setShowJoin(true)}>Join</button>
+        <Button variant="outline">Button</Button>
     </div>
     
     </>
