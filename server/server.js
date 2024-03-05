@@ -282,7 +282,7 @@ io.on('connection', (socket) => {
 
     socket.on('delete-room', (roomId) => {
         io.to(roomId).emit('send-lobby');
-        io.in(roomID).socketsLeave(roomId);
+        io.in(roomId).socketsLeave(roomId);
 
     });
     socket.on('user-disconnect', (roomID) => {
