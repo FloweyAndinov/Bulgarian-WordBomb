@@ -23,7 +23,7 @@ class GameTurns{
         this.turnCounter = Math.floor(Math.random() * turnArray.length);
         let randomsyllableId = Math.floor(Math.random() * syllables.length);
         this.syllable = syllables[randomsyllableId]
-        this.turnTimer = 5000;
+        this.turnTimer = 5000000;
         this.turnTimeout = null
         this.usedWords = []
     }
@@ -33,7 +33,12 @@ class GameTurns{
         return this.syllable
     }
     RemovePlayerByIndex(index) {
-        this.turnArray[index] = deadString
+        try {
+            this.turnArray[index] = deadString
+        }
+        catch {
+            
+        }
     }
     RemovePlayerByID(id) {
         const index = this.turnArray.findIndex(element => element === id);
