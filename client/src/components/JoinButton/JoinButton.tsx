@@ -72,7 +72,7 @@ const JoinButton = ({callParentFunction} : props) => {
     <>
     <AlertDialog>
           <AlertDialogTrigger asChild>
-          <Button onClick={() => {socket.emit('get-rooms')}} style={{margin:'2rem', minWidth:'fit-content', fontSize:'1.5em', padding:'1em'}} className='text-green-500' >Join a lobby</Button>
+          <Button onClick={() => {socket.emit('get-rooms')}} style={{margin:'2rem', minWidth:'fit-content', fontSize:'1.5em', padding:'1em'}} >Join a lobby</Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
           <AlertDialogHeader>

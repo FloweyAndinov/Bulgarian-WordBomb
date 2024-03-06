@@ -18,6 +18,8 @@ import CreateButton from '../CreateButton/CreateButton';
 import Rules from '@/components/Rules/Rules';
 import JoinButton from '../JoinButton/JoinButton';
 import React from 'react';
+import styled, { css, keyframes } from "styled-components";
+import LetterBackground from '../LetterBackground/LetterBackground';
 
 
 
@@ -81,8 +83,11 @@ function Home( {socket}: Props) {
     }
 
     
+    
   return (
     <>
+
+        <LetterBackground/>
 
         <div style={{position:'fixed', display:'flex', right:0 , marginRight:'5vw', marginTop: '1em'}}>
       <ThemeSwitch/>

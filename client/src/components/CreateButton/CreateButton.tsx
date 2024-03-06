@@ -50,7 +50,7 @@ const CreateButton = ({socket, callParentFunction} : props) => {
   return (
     <AlertDialog>
           <AlertDialogTrigger asChild>
-          <Button style={{margin:'2rem', minWidth:'fit-content', fontSize:'1.5em', padding:'1em'}} className='text-green-500' >Create a lobby</Button>
+          <Button style={{margin:'2rem', minWidth:'fit-content', fontSize:'1.5em', padding:'1em'}} >Create a lobby</Button>
           </AlertDialogTrigger>
 
           <AlertDialogContent>
