@@ -94,7 +94,7 @@ function Home( {socket}: Props) {
       
       </div>
       
-      <div style={{position: 'relative', display:'flex', flexDirection:'column', width:'20vw', left: '5vw', top: '30vh'}}>
+      <div style={{position: 'relative', display:'flex', flexDirection:'column', width:'fit-content', left: '5vw', top: '30vh'}}>
         <CreateButton socket={socket} callParentFunction={() => createRoom()}/>
         <JoinButton callParentFunction={() => createRoom()}/>
         <Rules/>

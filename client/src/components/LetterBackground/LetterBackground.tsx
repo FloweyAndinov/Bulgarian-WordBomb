@@ -2,12 +2,15 @@ import styles from "./LettersBackground.module.scss"
 
 const LetterBackground = () => {
 
-    const elements = Array.from({length : 35}, (_, index) => index)
+  const charArrayLength = 35;
+  const stringLength = 200;
 
-    function generateString(length : number) {
+    const elements = Array.from({length : charArrayLength}, (_, index) => index)
+
+    function generateString() {
         const characters = 'абвгдежзийклмнопрстуфхцчшщъьюя';
         let randomString = '';
-        for (let i = 0; i < length; i++) {
+        for (let i = 0; i < stringLength; i++) {
           const randomIndex = Math.floor(Math.random() * characters.length);
           randomString += characters.charAt(randomIndex);
         }
@@ -19,8 +22,8 @@ const LetterBackground = () => {
     <div style={{position:'fixed', transform : 'rotate(-55deg)'}}>
     {elements.map((key, index) => (
         
-        <span style={{fontSize:'2rem' , opacity:'2.5%', position:'absolute', top:`${index*2}em`, animation:`${styles.moveLeft} 30s linear infinite alternate`, userSelect:'none'}}>
-            {generateString(200)}
+        <span style={{fontSize:'8rem' , opacity:'5%', position:'absolute', top:`${index*2}em`, animation:`${styles.moveLeft} 30s linear infinite alternate`, userSelect:'none'}}>
+            {generateString()}
         </span>
       ))}
     </div>

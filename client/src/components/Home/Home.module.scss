@@ -33,12 +33,3 @@
     border: 3px solid $success-color;
 }
 
-@keyframes moveLeft {
-    
-    0% {
-      transform: translateX(-62%);
-    }
-    100% {
-      transform: translateX(-50%);
-    }
-  }

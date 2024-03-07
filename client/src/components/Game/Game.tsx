@@ -7,6 +7,18 @@ import bombPicture from '../../assets/bomb.png'
 import arrowPicture from '../../assets/arrow.png'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
+
+import { Button } from "@/components/ui/button"
+import { Cog } from 'lucide-react';
+
 interface Props {
   socket: Socket;
   isOwner: boolean;
@@ -23,24 +35,17 @@ function Game({socket , isOwner, roomIDProp} : Props) {
   const [playerList, setPlayerList] = useState<Array<string>>([])
   const [roomID, setRoomID] = useState("")
 
+
+  const [visible, setVisible] = useState(true)
+
   
 
   useEffect(() => {
 
-    
-
-    
-
-
-
-    
     const id = socket.id.slice(-6)
     if (isOwner) {
       socket.emit('start-game', id)
     }
-
-    
-
 
     //event for *play word* and *wait for word*
     socket.on('play-type', (serverWord : string, playerAngle : number) => {
@@ -111,10 +116,66 @@ function Game({socket , isOwner, roomIDProp} : Props) {
       <br />
       <span>{socket.id.slice(-6)} : user ID</span>
     </div>
+
+    <div style={{position:'fixed', right : '5vw', top: '2em', width : '20em', display:'flex', justifyContent:'space-around'}}>
+      <Sheet modal={false} onOpenChange={() => {setVisible(!visible)}}>
+
+
+      <SheetTrigger asChild style={{display: visible ? undefined : 'none'}}>
+        <Button style={{width:'fit-content'}}>
+        <Cog />
+        </Button>
+      </SheetTrigger>
+
+    <SheetContent>
+    <SheetHeader>
+      <SheetTitle style={{textAlign:'center'}}>Owner controls</SheetTitle>
+      <SheetDescription>
+        Room settings
+        <ul>
+          <li>- room invite link</li>
+          <li>- make room public</li>
+          <li>- make room closed</li>
+        </ul>
+      </SheetDescription>
+      <SheetDescription style={{marginTop:'5em'}}>
+        Players settings
+        <ul>
+          <li>-player icon</li>
+          <li>-players list</li>
+        </ul>
+      </SheetDescription>
+        </SheetHeader>
+      </SheetContent>
+      </Sheet>
+
+  <Sheet modal={false} onOpenChange={() => {setVisible(!visible)}}>
+    <SheetTrigger asChild style={{display: visible ? undefined : 'none'}}>
+      <Button>
+      <Cog />
+      </Button>
+    </SheetTrigger>
+
+    <SheetContent>
+    <SheetHeader>
+    <SheetTitle style={{textAlign:'center'}}>Player controls</SheetTitle>
+    <SheetDescription>
+      Players settings
+      <ul>
+        <li>-player icon</li>
+        <li>-players list</li>
+      </ul>
+    </SheetDescription>
+      </SheetHeader>
+    </SheetContent>
+</Sheet>
+    </div>
+
+
     <div className='' style={{position:'fixed', height:'10em', width:'10em', top:'40vh', left:'50vw', display:'flex', transform:'translate(-50%, -50%)'}}>
         
         
-          <div className='self-center bg-orange-800' style={{}}>
+          <div className='self-center bg-orange-900' style={{}}>
           <img src={bombPicture} className='self-center'/>
             <img src={arrowPicture} alt="arrow" style={{position: 'absolute', left : '0', top: '0', transformOrigin: 'center left',  transform: `translate(45%, 5%) rotate(${arrowAngle * 45}deg)`, zIndex:'0', opacity:'30%', width : '15em', height: '10em', transition:'0.3s ease-in-out'}}/>
           </div>

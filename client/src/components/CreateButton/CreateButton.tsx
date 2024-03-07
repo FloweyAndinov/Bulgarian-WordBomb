@@ -50,7 +50,7 @@ const CreateButton = ({socket, callParentFunction} : props) => {
   return (
     <AlertDialog>
           <AlertDialogTrigger asChild>
-          <Button className="hover:scale-105 transform transition duration-200" style={{margin:'2rem', minWidth:'fit-content', fontSize:'1.5em', padding:'1em'}}>Create a lobby</Button>
+          <Button className="hover:scale-105 transform transition duration-200" style={{margin:'2rem', minWidth:'fit-content', fontSize:'3rem', padding:'1em'}}>Create a lobby</Button>
           
 
           </AlertDialogTrigger>
