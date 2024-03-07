@@ -13,7 +13,7 @@ const Rules = () => {
   return (
     <Dialog modal={true}>
   <DialogTrigger asChild>
-  <Button style={{margin:'2rem', minWidth:'fit-content', fontSize:'1.5em', padding:'1em'}}>Rules</Button>
+  <Button className="hover:scale-105 transform transition duration-200" style={{margin:'2rem', minWidth:'fit-content', fontSize:'1.5em', padding:'1em'}}>Rules</Button>
   </DialogTrigger>
   <DialogContent>
     <DialogHeader>
