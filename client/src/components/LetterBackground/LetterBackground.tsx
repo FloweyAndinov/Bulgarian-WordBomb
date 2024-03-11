@@ -1,8 +1,19 @@
+import React from "react";
 import styles from "./LettersBackground.module.scss"
 
 const LetterBackground = () => {
 
-  const charArrayLength = 35;
+
+  const screenWidth = window.innerWidth;
+  const [charArrayLength, setCharArrayLength] = React.useState(Math.floor(screenWidth / 200));
+  React.useEffect(() => {
+    const handleResize = () => {
+      setCharArrayLength(Math.floor(window.innerWidth / 200));
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const stringLength = 200;
 
     const elements = Array.from({length : charArrayLength}, (_, index) => index)
