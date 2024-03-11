@@ -1,9 +1,13 @@
 @keyframes moveLeft {
     
-    0% {
-      transform: translateX(-65%);
+    from {
+      transform: translateX(-200%);
     }
-    100% {
-      transform: translateX(-50%);
+    to {
+      transform: translateX(-300%);
     }
   }
+
+.animatedLetters {
+  animation: moveLeft 25s linear infinite alternate;
+}
