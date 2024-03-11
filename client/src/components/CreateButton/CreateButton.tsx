@@ -12,7 +12,7 @@ import {
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Socket } from "socket.io-client";
 import Lobby from "@/components/Lobby/Lobby";
 
@@ -24,15 +24,22 @@ interface props {
 const CreateButton = ({socket, callParentFunction} : props) => {
     const [nameText, setNameText] = useState('');
     const [showCreate, setShowCreate] = useState(false);
+    const textref = useRef<string>('')
 
     useEffect(() => {
         if (showCreate) {
+          
             callParentFunction()
         }
     }, [showCreate])
 
+    useEffect(() => {
+      textref.current = 'test';
+      setNameText(textref.current)
+    },[])
+
     const handleInputChange = (e : React.ChangeEvent<HTMLInputElement>) => {
-        setNameText(e.target.value);
+        textref.current = e.target.value; 
       };
 
     function SetName() {
@@ -64,7 +71,9 @@ const CreateButton = ({socket, callParentFunction} : props) => {
     </AlertDialogHeader>
     <AlertDialogFooter>
       <AlertDialogCancel>Cancel</AlertDialogCancel>
-      <AlertDialogAction disabled={HasLength()} onClick={() => {SetName(); setShowCreate(true)}}>Continue</AlertDialogAction>
+      <AlertDialogAction 
+      //  disabled={HasLength()} 
+       onClick={() => {SetName(); setShowCreate(true)}}>Continue</AlertDialogAction>
     </AlertDialogFooter>
   </AlertDialogContent>
         </AlertDialog>
