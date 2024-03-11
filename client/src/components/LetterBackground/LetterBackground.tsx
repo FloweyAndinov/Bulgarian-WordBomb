@@ -14,7 +14,7 @@ const LetterBackground = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const stringLength = 200;
+  const stringLength = 40;
 
     const elements = Array.from({length : charArrayLength}, (_, index) => index)
 
@@ -30,13 +30,15 @@ const LetterBackground = () => {
 
 
   return (
-    <div style={{position:'fixed', transform : 'rotate(-55deg)'}}>
+    <div  style={{position:'fixed', transform : 'rotate(-55deg)', left:'-10vw'}}>
+      <div className={styles.animatedLetters} style={{width:'50vh', height:'fit-content' , opacity:'5%'}}>
     {elements.map((key, index) => (
         
-        <span style={{fontSize:'8rem' , opacity:'5%', position:'absolute', top:`${index*2}em`, animation:`${styles.moveLeft} 30s linear infinite alternate`, userSelect:'none'}}>
+        <span  key={key} style={{fontSize:'8rem' , position:'absolute', top:`${index*2}em`, userSelect:'none'}}>
             {generateString()}
         </span>
       ))}
+      </div>
     </div>
   )
 }
