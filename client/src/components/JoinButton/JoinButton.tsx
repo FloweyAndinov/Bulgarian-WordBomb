@@ -82,7 +82,9 @@ const JoinButton = ({callParentFunction} : props) => {
     </AlertDialogHeader>
     
     <>
-    {Array.from(rooms.entries()).filter(([roomId, roomSet]) => Array.from(roomSet)[0].length === 6)
+    {Array.from(rooms.entries()).filter(([roomId, roomSet]) => Array.from(roomSet)[0].length === 6).length === 0 ? 
+    <span className='text-destructive' style={{textAlign:'center', marginBottom:'1rem'}}>no rooms available</span>
+    : Array.from(rooms.entries()).filter(([roomId, roomSet]) => Array.from(roomSet)[0].length === 6)
             .map(([roomId, roomSet], index) => (
     <AlertDialog>
 
