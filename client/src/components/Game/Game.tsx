@@ -117,7 +117,7 @@ function Game({socket , isOwner, roomIDProp} : Props) {
     </div>
 
     <div style={{position:'fixed', right : '5vw', top: '2em', width : '20em', display:'flex', justifyContent:'flex-end'}}>
-      {ownership ? <OwnerSettings roomID={roomID}/> : <PlayerSettings />}
+      {ownership ? <OwnerSettings roomID={roomID}/> : <PlayerSettings roomID={roomID}/>}
 
   
     </div>
