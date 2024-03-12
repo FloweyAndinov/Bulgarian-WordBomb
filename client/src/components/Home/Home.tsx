@@ -21,6 +21,7 @@ import React from 'react';
 import styled, { css, keyframes } from "styled-components";
 import LetterBackground from '../LetterBackground/LetterBackground';
 import { toast } from 'sonner';
+import Game from '../Game/Game';
 
 
 
@@ -72,19 +73,19 @@ function Home( {socket}: Props) {
    }
 
    if (showCreate) {
-    return <Lobby socket={socket} isOwner={true}/>
+    return <Game isOwner={true} roomIDProp={roomID}/>
 }
     function ActivateJoinInvite() {
         setShowJoinInvite(true)
     }
 
     if (joinedRoom) {
-       return <Lobby socket={socket} isOwner={false} roomIDProp={roomID}/> 
+       return <Game isOwner={false} roomIDProp={roomID}/> 
     }
 
     if (showJoinInvite) {
         if (query) 
-        return <Lobby socket={socket} isOwner={false} roomIDProp={query}/>
+        return <Game isOwner={false} roomIDProp={query}/>
     }
 
     

@@ -31,9 +31,7 @@ function Lobby( {socket , isOwner, roomIDProp ='error_room_ID'}: Props) {
         getIds(room);
       })
 
-      socket.on('join-room-denied', () => {
-        console.log("join room denied");
-      })
+      
 
 
 
@@ -73,7 +71,7 @@ function Lobby( {socket , isOwner, roomIDProp ='error_room_ID'}: Props) {
 
   return (
     <>
-    {startGame ? <Game socket={socket} isOwner={isOwner} roomIDProp={roomID}/> : 
+    {startGame ? <></> : 
     <div>
     <div>Create</div>
     <div>{roomID}</div>

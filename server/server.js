@@ -31,7 +31,7 @@ class GameTurns{
         this.turnCounter = Math.floor(Math.random() * turnArray.length);
         let randomsyllableId = Math.floor(Math.random() * syllables.length);
         this.syllable = syllables[randomsyllableId]
-        this.turnTimer = 5000000;
+        this.turnTimer = 5000;
         this.turnTimeout = null
         this.usedWords = []
     }
@@ -195,12 +195,20 @@ io.on('connection', (socket) => {
         socket.join(room);
         roomsMap.set(room, new Room(room));
         io.in(room).emit('user-connected', room);
+
+        const roomID = io.sockets.adapter.rooms.get(room);
+        const ids = Array.from(roomID);
+
+        let namesArray = GetNameArray(ids)
+        io.to(room).emit('recieve-players-names', namesArray)
     });
 
     socket.on('join-room-window', (room) => {
         if (io.sockets.adapter.rooms.get(room) && roomsMap.get(room).locked == false) {
             socket.join(room);
             socket.emit('joined-room-window', room);
+
+            
         }
         else {
             socket.emit('join-room-denied');
@@ -210,6 +218,12 @@ io.on('connection', (socket) => {
     socket.on('join-room', (room) => {
         //console.log(room); //find the room that called this function
         io.in(room).emit('user-connected', room);
+
+        const roomID = io.sockets.adapter.rooms.get(room);
+        const ids = Array.from(roomID);
+
+        let namesArray = GetNameArray(ids)
+        io.to(room).emit('recieve-players-names', namesArray)
     });
 
     socket.on('leave-room', (room) => {// lower priority
@@ -230,7 +244,12 @@ io.on('connection', (socket) => {
     });
 
     function TimedOutTurn(roomID) {
-        gamesMap.get(roomID).RemovePlayerByIndex(gamesMap.get(roomID).turnCounter)
+        try {
+            gamesMap.get(roomID).RemovePlayerByIndex(gamesMap.get(roomID).turnCounter)
+        }
+        catch (error) {
+            console.log(error)
+        }
 
         if (gamesMap.get(roomID).CheckEnd()) {
             gamesMap.get(roomID).turnTimeout.destroy()
