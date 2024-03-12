@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react'
 import {Socket, io} from 'socket.io-client'
-import Game from '../Game/Game';
+
+
+/*
+component retired
+*/
 
 interface Props {
     socket: Socket;
