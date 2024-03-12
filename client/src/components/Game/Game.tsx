@@ -10,15 +10,17 @@ import PlayerSettings from '../GameSettings/PlayerSettings';
 import OwnerSettings from '../GameSettings/OwnerSettings';
 import { Toaster } from "@/components/ui/sonner"
 import { spawn } from 'child_process';
+import { Button } from '../ui/button';
+import { socket } from '@/socket';
+
 
 
 interface Props {
-  socket: Socket;
   isOwner: boolean;
   roomIDProp: string;
 }
 
-function Game({socket , isOwner, roomIDProp} : Props) {
+function Game({isOwner, roomIDProp} : Props) {
 
   const [showHome, setShowHome] = useState(false)
   const [word, setWord] = useState("")
@@ -28,24 +30,31 @@ function Game({socket , isOwner, roomIDProp} : Props) {
   const [playerList, setPlayerList] = useState<Array<string>>([])
   const [roomID, setRoomID] = useState("")
   const [ownership, setOwnership] = useState(false)
-
-  
+  const [gameStarted, setGameStarted] = useState(false)
 
   useEffect(() => {
 
-    const id = socket.id.slice(-6)
+    let id = socket.id.slice(-6);
     if (isOwner) {
-      socket.emit('start-game', id)
+        setRoomID(id);
+        console.log("owner created room")
+        socket.emit('create-room', id);
+    }
+    else {
+        setRoomID(roomIDProp);
+        socket.emit('join-room', roomIDProp);
     }
 
     //event for *play word* and *wait for word*
     socket.on('play-type', (serverWord : string, playerAngle : number) => {
+      setGameStarted(true)
       setPlayType(true)
       setWord(serverWord)
       console.log(playerAngle)
       setArrowAngle(playerAngle)
     })
     socket.on('play-wait', (serverWord : string, playerAngle : number) => {
+      setGameStarted(true)
       setPlayType(false)
       setWord(serverWord)
       console.log(playerAngle)
@@ -68,7 +77,7 @@ function Game({socket , isOwner, roomIDProp} : Props) {
 
     const handleBeforeUnload = () => {
       if(isOwner) {
-        socket.emit('delete-room', id)
+        socket.emit('delete-room', roomID)
       }
       
     };
@@ -86,15 +95,16 @@ function Game({socket , isOwner, roomIDProp} : Props) {
     
     // Attach an event listener for the beforeunload event
     window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    }
     
   }, [])
 
- 
-
-  useEffect(() => {
-    setRoomID(roomIDProp)
-  }, [roomIDProp])
-
+  function createGame () {
+    socket.emit('start-game', socket.id.slice(-6))
+  }
 
   const playerStyle  = (index : number) : CSSProperties => ({
     position: 'fixed',
@@ -157,7 +167,10 @@ function Game({socket , isOwner, roomIDProp} : Props) {
     
     
     <div className={styles.textsend}>
-      <WordSection socket={socket} enabled={playType} word={word} playerword={playerWord} roomIDProp={roomID} />
+      {gameStarted ? <WordSection socket={socket} enabled={playType} word={word} playerword={playerWord} roomIDProp={roomID} /> : null}
+      </div>
+      <div style={{position:'fixed', bottom:'10vh', left:'50%', transform:'translateX(-50%)'}}>
+          {ownership && !gameStarted? <Button onClick={createGame}>Start Game</Button> : null}
       </div>
       <Toaster/>
     </>
