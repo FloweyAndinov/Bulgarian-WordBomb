@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import PlayerSettings from '../GameSettings/PlayerSettings';
 import OwnerSettings from '../GameSettings/OwnerSettings';
 import { Toaster } from "@/components/ui/sonner"
+import { spawn } from 'child_process';
 
 
 interface Props {
@@ -127,11 +128,11 @@ function Game({socket , isOwner, roomIDProp} : Props) {
         <div style={{position:'absolute', top:'50%', left:'50%'}}>
         {playerList.map((player, index) => (  
         <div className='' key={player} style={{display:'flex', flexDirection:'column', ...playerStyle(index)}}>
-          <Avatar className='mx-auto'>
+          <Avatar className='mx-auto my-1'>
             <AvatarImage src="https://github.com/shadcn.png" />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
-          {player}
+          <span className='mx-auto '>{player}</span>
         </div>
         ))}
         </div>
