@@ -182,6 +182,15 @@ io.on('connection', (socket) => {
         }
     })
 
+    socket.on('check-ownership', () => {
+        if (roomsMap.has(socket.id.slice(-6))) {
+            socket.emit('ownership-confirmed')
+        }
+        else {
+            socket.emit('ownership-denied')
+        }
+    })
+
     socket.on('create-room', (room) => {
         socket.join(room);
         roomsMap.set(room, new Room(room));

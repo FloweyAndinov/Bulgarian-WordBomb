@@ -27,6 +27,7 @@ function Game({socket , isOwner, roomIDProp} : Props) {
   const [arrowAngle, setArrowAngle] = useState(0)
   const [playerList, setPlayerList] = useState<Array<string>>([])
   const [roomID, setRoomID] = useState("")
+  const [ownership, setOwnership] = useState(false)
 
   
 
@@ -72,7 +73,15 @@ function Game({socket , isOwner, roomIDProp} : Props) {
       
     };
 
-    
+    socket.emit('check-ownership')
+
+    socket.on('ownership-confirmed', () => {
+      setOwnership(true)
+    })
+
+    socket.on('ownership-denied', () => {
+      setOwnership(false)
+    })
   
     
     // Attach an event listener for the beforeunload event
@@ -108,8 +117,7 @@ function Game({socket , isOwner, roomIDProp} : Props) {
     </div>
 
     <div style={{position:'fixed', right : '5vw', top: '2em', width : '20em', display:'flex', justifyContent:'flex-end'}}>
-     <OwnerSettings roomID={roomID}/>
-    {/* <PlayerSettings /> */}
+      {ownership ? <OwnerSettings roomID={roomID}/> : <PlayerSettings />}
 
   
     </div>
