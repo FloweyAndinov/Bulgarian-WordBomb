@@ -31,7 +31,7 @@ interface props {
 
 const JoinButton = ({callParentFunction} : props) => {
 
-    const [rooms, setRooms] = React.useState<Map<string, Set<string>>>(new Map());
+    const [rooms, setRooms] = useState<Array<string>>([]);
     const counter = useRef(0);
     const [nameText, setNameText] = useState('');
   
@@ -82,16 +82,17 @@ const JoinButton = ({callParentFunction} : props) => {
     </AlertDialogHeader>
     
     <>
-    {Array.from(rooms.entries()).filter(([roomId, roomSet]) => Array.from(roomSet)[0].length === 6).length === 0 ? 
+    {rooms.length === 0 ? 
     <span className='text-destructive' style={{textAlign:'center', marginBottom:'1rem'}}>no rooms available</span>
-    : Array.from(rooms.entries()).filter(([roomId, roomSet]) => Array.from(roomSet)[0].length === 6)
-            .map(([roomId, roomSet], index) => (
+    : rooms.map((roomId, roomSet) => (
+      
+    
     <AlertDialog>
 
 
     <AlertDialogTrigger asChild>
         <Button key={roomId}>
-        Join {Array.from(roomSet)[0]}
+        Join {roomId}
         </Button>
     </AlertDialogTrigger>
 
@@ -107,7 +108,7 @@ const JoinButton = ({callParentFunction} : props) => {
 
     <AlertDialogFooter>
         <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction disabled={HasLength()} onClick={() => {SetName(); JoinRoom(Array.from(roomSet)[0])}}>Continue</AlertDialogAction>
+            <AlertDialogAction disabled={HasLength()} onClick={() => {SetName(); JoinRoom(roomId)}}>Continue</AlertDialogAction>
     </AlertDialogFooter>
 
 

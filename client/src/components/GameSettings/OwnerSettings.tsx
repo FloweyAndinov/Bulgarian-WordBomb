@@ -30,6 +30,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 
 import { Switch } from "@/components/ui/switch"
+import { socket } from "@/socket";
 
 interface props {
   roomID: string
@@ -46,7 +47,7 @@ const OwnerSettings = ({roomID}: props) => {
   let invitelink = baseurl + '?id=' + roomID
   let copyMessage = "Copied to clipboard"
 
-  const handleFocus = () => {
+  function handleFocus () {
     if (inputRef.current) {
       if (streamerMode) {
         //copy link
@@ -56,6 +57,30 @@ const OwnerSettings = ({roomID}: props) => {
     inputRef.current.select();
     }
   };
+
+  function handleRoomLock(pendingStatus : boolean) {
+    setRoomLocked(pendingStatus)
+    if (pendingStatus) {
+      console.log('sent lock room')
+      socket.emit('lock-room', roomID); // todo in server
+    }
+    else {
+      console.log('sent unlock room')
+      socket.emit('unlock-room', roomID); // todo in server
+    }
+  }
+
+  function handleRoomPublic(pendingStatus : boolean) {
+    setRoomPublic(pendingStatus)
+    if (pendingStatus) {
+      console.log('sent public room')
+      socket.emit('change-public-room', roomID); // todo in server
+    }
+    else {
+      console.log('sent private room')
+      socket.emit('change-private-room', roomID); // todo in server
+    }
+  }
       
   return (
     <Sheet modal={false} onOpenChange={() => {setVisible(!visible)}}>
@@ -84,11 +109,11 @@ const OwnerSettings = ({roomID}: props) => {
             <AccordionContent>
               <div className="flex flex-row justify-between my-3">
               {roomPublic ? <span>Currently room is public</span> : <span>Currently room is private</span>}
-              <Switch checked={roomPublic} onClick={() => {setRoomPublic(!roomPublic)}}/>
+              <Switch checked={roomPublic} onClick={() => {handleRoomPublic(!roomPublic)}}/>
               </div>
               <div className="flex flex-row justify-between my-3">
               {roomLocked ? <span>Currently room is locked</span> : <span>Currently room is unlocked</span>}
-              <Switch checked={roomLocked} onClick={() => {setRoomLocked(!roomLocked)}}/>
+              <Switch checked={roomLocked} onClick={() => {handleRoomLock(!roomLocked)}}/>
               </div>
             </AccordionContent>
         </AccordionItem>

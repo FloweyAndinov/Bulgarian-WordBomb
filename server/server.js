@@ -17,6 +17,14 @@ const syllablesPath = 'words.csv';
 
 let syllables = [];
 
+class Room {
+    constructor(id) {
+        this.id = id
+        this.public = true
+        this.locked = false
+    }
+}
+
 class GameTurns{
     constructor(turnArray) {
         this.turnArray = turnArray
@@ -92,6 +100,8 @@ let gamesMap = new Map();
 
 let namesMap = new Map(); // id : name
 
+let roomsMap = new Map();
+
 const deadString = '______' //this replaces id when player dies
 
 const stream = fs.createReadStream(syllablesPath, { encoding: 'utf-8' })
@@ -135,9 +145,12 @@ io.on('connection', (socket) => {
 
     socket.on('get-rooms', () => {
         const rooms = io.sockets.adapter.rooms;
-        // //console.log(rooms);
-
-        socket.emit('rooms', Array.from(rooms));
+        let roomsArray = Array.from(rooms.keys());
+        roomsArray = roomsArray.filter(name => {
+            return roomsMap.has(name) && roomsMap.get(name).public == true && roomsMap.get(name).locked == false;
+        });
+        console.log(roomsArray)
+        socket.emit('rooms', roomsArray);
     });
 
     socket.on('set-name', (name) => {
@@ -145,15 +158,43 @@ io.on('connection', (socket) => {
         //console.log("name added")
     })
 
+    socket.on('lock-room', (room) => {
+        if (socket.id.slice(-6) == room) {
+            roomsMap.get(room).locked = true
+        }
+    })
+
+    socket.on('unlock-room', (room) => {
+        if (socket.id.slice(-6) == room) {
+            roomsMap.get(room).locked = false
+        }
+    })
+
+    socket.on('change-public-room', (room) => {
+        if (socket.id.slice(-6) == room) {
+            roomsMap.get(room).public = true
+        }
+    })
+
+    socket.on('change-private-room', (room) => {
+        if (socket.id.slice(-6) == room) {
+            roomsMap.get(room).public = false
+        }
+    })
+
     socket.on('create-room', (room) => {
         socket.join(room);
+        roomsMap.set(room, new Room(room));
         io.in(room).emit('user-connected', room);
     });
 
     socket.on('join-room-window', (room) => {
-        if (io.sockets.adapter.rooms.get(room)) {
+        if (io.sockets.adapter.rooms.get(room) && roomsMap.get(room).locked == false) {
             socket.join(room);
             socket.emit('joined-room-window', room);
+        }
+        else {
+            socket.emit('join-room-denied');
         }
     });
 
@@ -170,7 +211,8 @@ io.on('connection', (socket) => {
     socket.on('get-ids' , (roomID) => {
         const room = io.sockets.adapter.rooms.get(roomID);
         const ids = Array.from(room);
-        let namesArray = GetNameArray(ids)
+        let namesArray = GetNameArray(ids);
+        
         socket.emit('ids', ids, namesArray);
     });
     socket.on('send-game-screen', (roomID) => {

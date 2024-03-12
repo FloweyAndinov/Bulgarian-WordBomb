@@ -20,6 +20,7 @@ import JoinButton from '../JoinButton/JoinButton';
 import React from 'react';
 import styled, { css, keyframes } from "styled-components";
 import LetterBackground from '../LetterBackground/LetterBackground';
+import { toast } from 'sonner';
 
 
 
@@ -60,6 +61,10 @@ function Home( {socket}: Props) {
             setJoinedRoom(true); 
             setRoomID(roomID);
             });
+
+        socket.on('join-room-denied', () => {
+            toast("Error in joining room. Room might be locked.")
+            })
     }, [socket]);
 
    function createRoom() {
