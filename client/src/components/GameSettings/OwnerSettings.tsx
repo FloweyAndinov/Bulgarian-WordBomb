@@ -7,6 +7,13 @@ import {
     SheetTrigger,
   } from "@/components/ui/sheet"
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+
 import { Separator } from "@/components/ui/separator"
   
 import { Button } from "@/components/ui/button"
@@ -130,7 +137,26 @@ const OwnerSettings = ({roomID}: props) => {
             <AccordionTrigger>Streamer mode</AccordionTrigger>
             <AccordionContent>
             <div className="flex flex-row justify-between my-3">
-              {streamerMode ? <span>You're in streamer mode</span> : <span>You're in casual mode</span>}
+              {streamerMode ? 
+  <TooltipProvider>
+    <Tooltip>
+          <TooltipTrigger>You're in streamer mode</TooltipTrigger>
+    <TooltipContent>
+          <p>Streamer mode allows you to hide sensitive information</p>
+    </TooltipContent>
+  </Tooltip>
+</TooltipProvider>
+
+: 
+<TooltipProvider>
+<Tooltip>
+      <TooltipTrigger>You're in casual mode</TooltipTrigger>
+<TooltipContent>
+      <p>Streamer mode allows you to hide sensitive information</p>
+</TooltipContent>
+</Tooltip>
+</TooltipProvider>}
+
               <Switch checked={streamerMode} onClick={() => {setStreamerMode(!streamerMode)}}/>
               </div>
             </AccordionContent>
