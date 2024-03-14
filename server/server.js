@@ -270,6 +270,38 @@ io.on('connection', (socket) => {
         console.log("passed turn")
     }
 
+    socket.on('request-players-names', (roomID) => {
+        const room = io.sockets.adapter.rooms.get(roomID);
+        const ids = Array.from(room);
+
+        let namesArray = GetNameArray(ids)
+        io.to(roomID).emit('recieve-players-names', namesArray)
+    })
+
+    socket.on('kick-player', (player, room) => {
+        let playerId = ""
+        namesMap.forEach((value, key) => {
+            if (value == player) {
+                playerId = key
+                return
+            }
+        })
+
+        if (socket.id.slice(-6) == room) {
+            RemoveAlive(room, player)
+            const roomObject = io.sockets.adapter.rooms.get(room);
+            const ids = Array.from(roomObject);
+
+            ids.forEach(id => {
+                console.log(id, " ", playerId)
+                if (id===playerId) {
+                    console.log("kicking player")
+                    io.to(id).emit('kicked')
+                }
+            })
+        }
+    })
+
     socket.on('start-game', (roomID) => {
         const room = io.sockets.adapter.rooms.get(roomID);
         const ids = Array.from(room);

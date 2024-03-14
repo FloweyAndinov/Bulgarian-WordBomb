@@ -12,6 +12,7 @@ import { Toaster } from "@/components/ui/sonner"
 import { spawn } from 'child_process';
 import { Button } from '../ui/button';
 import { socket } from '@/socket';
+import { toast } from 'sonner';
 
 
 
@@ -90,6 +91,15 @@ function Game({isOwner, roomIDProp} : Props) {
 
     socket.on('ownership-denied', () => {
       setOwnership(false)
+    })
+
+    socket.on('kicked', () => {
+      console.log('kicked')
+      socket.disconnect()
+      setShowHome(true)
+      setTimeout(() => {
+      toast("You have been kicked from the room")
+      } , 100)
     })
   
     
@@ -170,7 +180,7 @@ function Game({isOwner, roomIDProp} : Props) {
       {gameStarted ? <WordSection socket={socket} enabled={playType} word={word} playerword={playerWord} roomIDProp={roomID} /> : null}
       </div>
       <div style={{position:'fixed', bottom:'10vh', left:'50%', transform:'translateX(-50%)'}}>
-          {ownership && !gameStarted? <Button onClick={createGame}>Start Game</Button> : null}
+          {ownership && !gameStarted? <Button disabled={playerList.length <= 1 ? true : false} onClick={createGame}>Start Game</Button> : null}
       </div>
       <Toaster/>
     </>

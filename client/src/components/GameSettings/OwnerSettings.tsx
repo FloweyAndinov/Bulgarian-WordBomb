@@ -18,7 +18,7 @@ import { Separator } from "@/components/ui/separator"
   
 import { Button } from "@/components/ui/button"
 import { Cog, Copy } from 'lucide-react';
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import {
   Accordion,
@@ -43,9 +43,14 @@ const OwnerSettings = ({roomID}: props) => {
   const [roomPublic , setRoomPublic] = useState<boolean>(true);
   const [roomLocked , setRoomLocked] = useState<boolean>(false);
   const [streamerMode, setStreamerMode] = useState<boolean>(false);
+  const [playerList , setPlayerList] = useState<Array<string>>([]);
   let baseurl = window.location.href.split('?')[0];
   let invitelink = baseurl + '?id=' + roomID
   let copyMessage = "Copied to clipboard"
+
+  useEffect(() => {
+    socket.emit('request-players-names', roomID);
+  },[])
 
   function handleFocus () {
     if (inputRef.current) {
@@ -81,6 +86,15 @@ const OwnerSettings = ({roomID}: props) => {
       socket.emit('change-private-room', roomID); // todo in server
     }
   }
+
+  socket.on('recieve-players-names', (recievedList : Array<string>) => {
+    setPlayerList(recievedList)
+    console.log('recieved players')
+})
+
+function sendKick (player : string) {
+  socket.emit('kick-player', player, roomID);
+}
       
   return (
     <Sheet modal={false} onOpenChange={() => {setVisible(!visible)}}>
@@ -154,7 +168,11 @@ const OwnerSettings = ({roomID}: props) => {
      <AccordionItem value="item-3">
             <AccordionTrigger>players list</AccordionTrigger>
             <AccordionContent>
-              <span>functionality coming soon</span>
+              {playerList ? playerList.map((player) => 
+              <div className="my-3 flex flex-row justify-between">
+                <span className="my-auto ml-4">{player}</span>
+                <Button onClick={() => sendKick(player)}>Kick</Button>
+              </div>) : null}
             </AccordionContent>
         </AccordionItem>
 
