@@ -40,6 +40,8 @@ interface props {
 const PlayerSettings = ({roomID} : props) => {
     const [visible, setVisible] = useState(true)
     const [streamerMode, setStreamerMode] = useState<boolean>(false);
+    const [playerList , setPlayerList] = useState<Array<string>>([]);
+    
     let baseurl = window.location.href.split('?')[0];
     let invitelink = baseurl + '?id=' + roomID
     let copyMessage = "Copied to clipboard"
@@ -55,6 +57,11 @@ const PlayerSettings = ({roomID} : props) => {
       inputRef.current.select();
       }
     };
+
+    socket.on('recieve-players-names', (recievedList : Array<string>) => {
+      setPlayerList(recievedList)
+      console.log('recieved players')
+    })
 
   return (
     <Sheet modal={false} onOpenChange={() => {setVisible(!visible)}}>
@@ -99,7 +106,10 @@ const PlayerSettings = ({roomID} : props) => {
      <AccordionItem value="item-3">
             <AccordionTrigger>players list</AccordionTrigger>
             <AccordionContent>
-              <span>functionality coming soon</span>
+            {playerList ? playerList.map((player) => 
+              <div className="my-3 flex flex-row justify-between">
+                <span className="my-auto ml-4">{player}</span>
+              </div>) : null}
             </AccordionContent>
         </AccordionItem>
 
