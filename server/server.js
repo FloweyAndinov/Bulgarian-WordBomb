@@ -31,7 +31,7 @@ class GameTurns{
         this.turnCounter = Math.floor(Math.random() * turnArray.length);
         let randomsyllableId = Math.floor(Math.random() * syllables.length);
         this.syllable = syllables[randomsyllableId]
-        this.turnTimer = 5000;
+        this.turnTimer = 5000000;
         this.turnTimeout = null
         this.usedWords = []
     }
