@@ -148,7 +148,7 @@ function Game({isOwner, roomIDProp} : Props) {
         
           <div className='self-center bg-orange-900' style={{}}>
           <img src={bombPicture} className='self-center'/>
-            <img src={arrowPicture} alt="arrow" style={{position: 'absolute', left : '0', top: '0', transformOrigin: 'center left',  transform: `translate(45%, 5%) rotate(${arrowAngle * 45}deg)`, zIndex:'0', opacity:'30%', width : '15em', height: '10em', transition:'0.3s ease-in-out'}}/>
+            <img src={arrowPicture} alt="arrow" style={{position: 'absolute', left : '50%', top: '50%', transformOrigin: 'center left',  transform: `translate(0%, -50%) rotate(${arrowAngle * 45}deg)`, zIndex:'0', opacity:'30%', width : '10vw', height: '10vh', transition:'0.3s ease-in-out'}}/>
           </div>
 
 

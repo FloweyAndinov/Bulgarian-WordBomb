@@ -13,12 +13,11 @@ interface Props {
 interface EnabledProps {
     socket : Socket
     roomIDProp : string
+    word: string
 }
-function WordSection({socket, enabled, roomIDProp}: Props) {
+function WordSection({socket, enabled, roomIDProp, word}: Props) {
     const [typeable, setTypeable] = useState(false)
-    const [roomId, setRoomID] = useState<string>("")
-    const [currentword, setCurrentWord] = useState("")
-    
+    const [roomId, setRoomID] = useState<string>("")    
 
    
     useEffect(() => {
@@ -45,14 +44,14 @@ function WordSection({socket, enabled, roomIDProp}: Props) {
 
   return (
     <>
-    {typeable? <Enabled socket={socket} roomIDProp={roomId}/> : <Disabled/>}
+    {typeable? <Enabled socket={socket} roomIDProp={roomId} word={word}/> : <Disabled/>}
     </>
   )
 
   
 }
 
-function Enabled({socket, roomIDProp}: EnabledProps) {
+function Enabled({socket, roomIDProp, word}: EnabledProps) {
 
     const [playerWord, setPlayerWord] = useState("")
     const [roomId, setRoomID] = useState<string>("")
@@ -119,8 +118,13 @@ function Enabled({socket, roomIDProp}: EnabledProps) {
         <div style={{display:'flex', height : '1.5em', justifyContent:'center'}}>
         {playerWord.length < 1 ? 
         <div style={{borderRadius : '5px', fontSize:'2em', width:'1em', height : '1.5em', backgroundColor : 'brown', textAlign:'center', margin:'0.1em'}}></div> :
-         playerWord.split('').map((char) => (
+         playerWord.split('').map((char, index) => (
+          
+          word[0].includes(char) && word[1].includes(playerWord[index + 1]) ||  word[1].includes(char) && word[0].includes(playerWord[index - 1])? 
+        <div style={{borderRadius : '5px', fontSize:'2em', width:'1em', height : '1.5em', backgroundColor : 'green', textAlign:'center', margin:'0.1em'}}> {char} </div>
+          : 
         <div style={{borderRadius : '5px', fontSize:'2em', width:'1em', height : '1.5em', backgroundColor : 'brown', textAlign:'center', margin:'0.1em'}}> {char} </div>
+
         ))}
         </div>
             
