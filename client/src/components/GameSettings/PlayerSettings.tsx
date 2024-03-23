@@ -32,6 +32,9 @@ import { toast } from "sonner";
 import { Switch } from "@/components/ui/switch"
 import { socket } from "@/socket";
 
+import settings_sound from '@/assets/sfx/Settings_Buttons.mp3'
+
+
 
 interface props {
     roomID: string
@@ -63,8 +66,12 @@ const PlayerSettings = ({roomID} : props) => {
       console.log('recieved players')
     })
 
+    function play() {
+      new Audio(settings_sound).play()
+    }
+
   return (
-    <Sheet modal={false} onOpenChange={() => {setVisible(!visible)}}>
+    <Sheet modal={false} onOpenChange={() => {setVisible(!visible); play()}}>
       
 
     <SheetTrigger asChild style={{display: visible ? undefined : 'none'}}>
@@ -81,7 +88,7 @@ const PlayerSettings = ({roomID} : props) => {
     <Accordion type="single" collapsible>
 
     <AccordionItem value="item-1">
-          <AccordionTrigger>Invite players</AccordionTrigger>
+          <AccordionTrigger onClick={play}>Invite players</AccordionTrigger>
           <AccordionContent>
             <div className="flex flex-row my-2 " style={{marginLeft:'-1rem'}}>
             <Input readOnly ref={inputRef} defaultValue={streamerMode? 'click to copy' :invitelink} style={{marginLeft:'1rem'}} onClick={handleFocus} />
@@ -96,7 +103,7 @@ const PlayerSettings = ({roomID} : props) => {
 
 
         <AccordionItem value="item-2">
-          <AccordionTrigger>player icon</AccordionTrigger>
+          <AccordionTrigger onClick={play}>player icon</AccordionTrigger>
           <AccordionContent>
           <span>functionality coming soon</span>
           </AccordionContent>
@@ -104,7 +111,7 @@ const PlayerSettings = ({roomID} : props) => {
 
     
      <AccordionItem value="item-3">
-            <AccordionTrigger>players list</AccordionTrigger>
+            <AccordionTrigger onClick={play}>players list</AccordionTrigger>
             <AccordionContent>
             {playerList ? playerList.map((player) => 
               <div className="my-3 flex flex-row justify-between">
@@ -114,7 +121,7 @@ const PlayerSettings = ({roomID} : props) => {
         </AccordionItem>
 
         <AccordionItem value="item-4">
-            <AccordionTrigger>Streamer mode</AccordionTrigger>
+            <AccordionTrigger onClick={play}>Streamer mode</AccordionTrigger>
             <AccordionContent>
             <div className="flex flex-row justify-between my-3">
               {streamerMode ? 

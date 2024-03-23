@@ -58,7 +58,9 @@ class GameTurns{
             return this.GetNextTurn() //user didn't submit word
         }
         else if (this.usedWords.indexOf(used_word) != -1) {
+            
             return false; //user submit used word
+            
         }
         else {
             this.usedWords.push(used_word) // user submits new word
@@ -288,6 +290,7 @@ io.on('connection', (socket) => {
         })
 
         if (socket.id.slice(-6) == room) {
+            gamesMap.get(room).PassTurn('fail')
             RemoveAlive(room, player)
             const roomObject = io.sockets.adapter.rooms.get(room);
             const ids = Array.from(roomObject);
@@ -360,11 +363,14 @@ io.on('connection', (socket) => {
                    //console.log(nextPerson)
                    io.to(roomID).emit('play-wait',nextSyllable, nextIndex);
                    io.to(nextPerson).emit('play-type',nextSyllable, nextIndex);
+                   
+                }
+                else {
+                    io.to(roomID).emit('word-submit-denied');
                 }
             }
             else {
-                //console.log('no word found, correct syllable')
-                //TODO : flash the user red text (to indicate fail)
+                
             }
         }
     })

@@ -13,6 +13,14 @@ import { spawn } from 'child_process';
 import { Button } from '../ui/button';
 import { socket } from '@/socket';
 import { toast } from 'sonner';
+ // @ts-ignore
+import Timeout from 'timeout-refresh'
+
+
+import bomb_clock_sound from '@/assets/sfx/Clock.wav'
+import bomb_fuse_sound from '@/assets/sfx/Bomb_Fuse.wav'
+import change_turn_sounds from '@/assets/sfx/Change_Turn.wav'
+import wrong_sound from '@/assets/sfx/Wrong_Word.mp3'
 
 
 
@@ -32,8 +40,42 @@ function Game({isOwner, roomIDProp} : Props) {
   const [roomID, setRoomID] = useState("")
   const [ownership, setOwnership] = useState(false)
   const [gameStarted, setGameStarted] = useState(false)
+  const [bombclockSfx] =useState(new Audio(bomb_clock_sound))
+  const [bombfuseSfx] =useState(new Audio(bomb_fuse_sound))
+  const [changeturnSfx] =useState(new Audio(change_turn_sounds))
+  const [wrongSfx] =useState(new Audio(wrong_sound))
+  
 
+  bombclockSfx.preload = 'metadata'
+  
+
+  function play() {
+    bombclockSfx.play()
+  }
+
+  function loopPlay() {
+    bombclockSfx.loop = true
+    if (!bombclockSfx.paused) {
+      stop()
+    }
+    bombclockSfx.play()
+  }
+
+  function sfxSetup() {
+    bombclockSfx.playbackRate = 0.95
+    bombfuseSfx.volume = 0.1
+    bombfuseSfx.loop = true;
+    bombfuseSfx.play()
+
+  }
+  function stop() {
+    bombclockSfx.pause()
+    bombclockSfx.playbackRate += 0.01
+    bombclockSfx.currentTime = 0
+  }
   useEffect(() => {
+
+    
 
     let id = socket.id.slice(-6);
     if (isOwner) {
@@ -53,6 +95,10 @@ function Game({isOwner, roomIDProp} : Props) {
       setWord(serverWord)
       console.log(playerAngle)
       setArrowAngle(playerAngle)
+
+      
+     changeturnSfx.play()
+        loopPlay()
     })
     socket.on('play-wait', (serverWord : string, playerAngle : number) => {
       setGameStarted(true)
@@ -60,6 +106,11 @@ function Game({isOwner, roomIDProp} : Props) {
       setWord(serverWord)
       console.log(playerAngle)
       setArrowAngle(playerAngle)
+     
+
+     changeturnSfx.play()
+      loopPlay()
+      
     })
     socket.on('recieve-player-word', (playerWord : string) => {
       setPlayerWord(playerWord)
@@ -101,6 +152,12 @@ function Game({isOwner, roomIDProp} : Props) {
       toast("You have been kicked from the room")
       } , 100)
     })
+
+    socket.on('word-submit-denied', () => {
+      wrongSfx.play()
+    })
+   
+    
   
     
     // Attach an event listener for the beforeunload event
@@ -114,6 +171,7 @@ function Game({isOwner, roomIDProp} : Props) {
 
   function createGame () {
     socket.emit('start-game', socket.id.slice(-6))
+    sfxSetup()
   }
 
   const playerStyle  = (index : number) : CSSProperties => ({
@@ -123,6 +181,7 @@ function Game({isOwner, roomIDProp} : Props) {
   });
 
   if (showHome) {
+    stop()
     return <Home socket={socket}/>
   }
   return (

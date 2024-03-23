@@ -32,6 +32,9 @@ import { toast } from "sonner";
 import { Switch } from "@/components/ui/switch"
 import { socket } from "@/socket";
 
+import settings_sound from '@/assets/sfx/Settings_Buttons.mp3'
+
+
 interface props {
   roomID: string
 }
@@ -47,6 +50,10 @@ const OwnerSettings = ({roomID}: props) => {
   let baseurl = window.location.href.split('?')[0];
   let invitelink = baseurl + '?id=' + roomID
   let copyMessage = "Copied to clipboard"
+
+  function play() {
+    new Audio(settings_sound).play()
+  }
 
   useEffect(() => {
     socket.emit('request-players-names', roomID);
@@ -97,7 +104,7 @@ function sendKick (player : string) {
 }
       
   return (
-    <Sheet modal={false} onOpenChange={() => {setVisible(!visible)}}>
+    <Sheet modal={false} onOpenChange={() => {setVisible(!visible); play()}}>
       
 
     <SheetTrigger asChild style={{display: visible ? undefined : 'none'}}>
@@ -119,15 +126,15 @@ function sendKick (player : string) {
 
 
      <AccordionItem value="item-1">
-        <AccordionTrigger>Manage room</AccordionTrigger>
+        <AccordionTrigger onClick={() => {play()}}>Manage room</AccordionTrigger>
             <AccordionContent>
               <div className="flex flex-row justify-between my-3">
               {roomPublic ? <span>Currently room is public</span> : <span>Currently room is private</span>}
-              <Switch checked={roomPublic} onClick={() => {handleRoomPublic(!roomPublic)}}/>
+              <Switch checked={roomPublic} onClick={() => {handleRoomPublic(!roomPublic); play()}}/>
               </div>
               <div className="flex flex-row justify-between my-3">
               {roomLocked ? <span>Currently room is locked</span> : <span>Currently room is unlocked</span>}
-              <Switch checked={roomLocked} onClick={() => {handleRoomLock(!roomLocked)}}/>
+              <Switch checked={roomLocked} onClick={() => {handleRoomLock(!roomLocked); play()}}/>
               </div>
             </AccordionContent>
         </AccordionItem>
@@ -143,11 +150,11 @@ function sendKick (player : string) {
     <Accordion type="single" collapsible>
 
     <AccordionItem value="item-1">
-          <AccordionTrigger>Invite players</AccordionTrigger>
+          <AccordionTrigger onClick={() => {play()}}>Invite players</AccordionTrigger>
           <AccordionContent>
             <div className="flex flex-row my-2 " style={{marginLeft:'-1rem'}}>
             <Input readOnly ref={inputRef} defaultValue={streamerMode? 'click to copy' :invitelink} style={{marginLeft:'1rem'}} onClick={handleFocus} />
-              <Button variant='link' onClick={() => {navigator.clipboard.writeText(invitelink); toast(copyMessage)}}>
+              <Button variant='link' onClick={() => {navigator.clipboard.writeText(invitelink); toast(copyMessage); play()}}>
                 
               <Copy style={{color:'white'}}/>
               </Button>
@@ -158,7 +165,7 @@ function sendKick (player : string) {
 
 
         <AccordionItem value="item-2">
-          <AccordionTrigger>player icon</AccordionTrigger>
+          <AccordionTrigger onClick={play}>player icon</AccordionTrigger>
           <AccordionContent>
           <span>functionality coming soon</span>
           </AccordionContent>
@@ -166,18 +173,18 @@ function sendKick (player : string) {
 
     
      <AccordionItem value="item-3">
-            <AccordionTrigger>players list</AccordionTrigger>
+            <AccordionTrigger onClick={() => {play()}}>players list</AccordionTrigger>
             <AccordionContent>
               {playerList ? playerList.map((player) => 
               <div className="my-3 flex flex-row justify-between">
                 <span className="my-auto ml-4">{player}</span>
-                <Button onClick={() => sendKick(player)}>Kick</Button>
+                <Button onClick={() => {sendKick(player); play()}}>Kick</Button>
               </div>) : null}
             </AccordionContent>
         </AccordionItem>
 
         <AccordionItem value="item-4">
-            <AccordionTrigger>Streamer mode</AccordionTrigger>
+            <AccordionTrigger onClick={() => {play()}}>Streamer mode</AccordionTrigger>
             <AccordionContent>
             <div className="flex flex-row justify-between my-3">
               {streamerMode ? 
@@ -200,7 +207,7 @@ function sendKick (player : string) {
 </Tooltip>
 </TooltipProvider>}
 
-              <Switch checked={streamerMode} onClick={() => {setStreamerMode(!streamerMode)}}/>
+              <Switch checked={streamerMode} onClick={() => {setStreamerMode(!streamerMode); play()}}/>
               </div>
             </AccordionContent>
         </AccordionItem>

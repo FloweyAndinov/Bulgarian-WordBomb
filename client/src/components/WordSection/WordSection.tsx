@@ -107,6 +107,10 @@ function Enabled({socket, roomIDProp, word}: EnabledProps) {
           }
         
     };
+
+    socket.on('word-submit-denied', () => {
+     // shake the container div
+    })
     
 
        
