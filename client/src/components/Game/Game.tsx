@@ -186,18 +186,18 @@ function Game({isOwner, roomIDProp} : Props) {
 
   function playerStyle (index : number) : CSSProperties 
   {
-    let translateLength = 15;
+    let translateLength = 17;
     let degrees = 0;
     if (index!=0) {
       if (index%4==0) {
-        translateLength = 15;
+        translateLength = 17;
       }
       else if (index%2==0) {
-        translateLength = 13;
+        translateLength = 15;
         
       }
       else if (index%2==1) {
-        translateLength = 14;
+        translateLength = 16;
       }
     }
     let degreeOffset = 5;
@@ -267,11 +267,11 @@ function Game({isOwner, roomIDProp} : Props) {
         <div style={{position:'absolute', top:'50%', left:'50%'}}>
         {playerList.map((player, index) => (  
         <div className='' key={player} style={{display:'flex', flexDirection:'column', ...playerStyle(index)}}>
-          <Avatar className='mx-auto my-1'>
+          <Avatar className='mx-auto my-2' style={{width : '4em', height:'auto'}}>
             <AvatarImage src="https://github.com/shadcn.png" />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
-          <span className='mx-auto'>{player}</span>
+          <span className='mx-auto text-2xl'>{player}</span>
         </div>
         ))}
         </div>
@@ -282,14 +282,15 @@ function Game({isOwner, roomIDProp} : Props) {
     </div>
 
      
-    {gameStarted ? <div className='flex flex-col' style={{position:'relative', width:'max-content', height:'100px', bottom:'-20em', justifyContent:'center', left:'50%', transform:'translateX(-50%)'}}>
+    {gameStarted ? 
+      <div className='flex flex-col' style={{position:'relative', width:'max-content', height:'100px', bottom:'-20em', justifyContent:'center', left:'50%', transform:'translateX(-50%)', marginBottom : '25em'}}>
         <span style={{width: 'max-content', fontSize:'1.5em'}}>Write a word that cointains</span>
         <br />
         <span style={{fontSize:'1.5em', color:'red', textAlign:'center'}}>{word}</span>
         {gameStarted ? <WordSection socket={socket} enabled={playType} word={word} playerword={playerWord} roomIDProp={roomID} /> : null}
       </div>
        :
-       <div className='flex flex-col' style={{position:'fixed', width:'max-content', height:'100px', top:'5em', justifyContent:'center', left:'50%', transform:'translateX(-50%)'}}>
+       <div className='flex flex-col' style={{position:'relative', width:'max-content', height:'100px', top:'-20em', justifyContent:'center', left:'50%', transform:'translateX(-50%)'}}>
         <span style={{width: 'max-content', fontSize:'1.5em'}}>Waiting for host to start game</span>
         </div>
         }
@@ -298,7 +299,7 @@ function Game({isOwner, roomIDProp} : Props) {
     <div className={styles.textsend}>
       
       </div>
-      <div style={{position:'fixed', bottom:'10vh', left:'50%', transform:'translateX(-50%)'}}>
+      <div style={{ display : 'flex' , position:'relative', bottom:'-15em', justifyContent:'center', width:'100vw'}}>
           {ownership && !gameStarted? <Button style={{fontSize:'1.5em', padding:'1em'}} disabled={playerList.length <= 1 ? true : false} onClick={createGame}>Start Game</Button> : null}
       </div>
       <Toaster/>
