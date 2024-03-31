@@ -46,6 +46,7 @@ function Game({isOwner, roomIDProp} : Props) {
   const [changeturnSfx] =useState(new Audio(change_turn_sounds))
   const [wrongSfx] =useState(new Audio(wrong_sound))
   const [debug, setDebug] = useState(false)
+  const [angleMultiplier, setAngleMultiplier] = useState(0)
   
 
   bombclockSfx.preload = 'metadata'
@@ -82,7 +83,7 @@ function Game({isOwner, roomIDProp} : Props) {
     let id = socket.id.slice(-6);
     if (isOwner) {
         setRoomID(id);
-        console.log("owner created room")
+        // console.log("owner created room")
         socket.emit('create-room', id);
     }
     else {
@@ -95,9 +96,11 @@ function Game({isOwner, roomIDProp} : Props) {
       setGameStarted(true)
       setPlayType(true)
       setWord(serverWord)
-      console.log(playerAngle)
       setArrowAngle(playerAngle)
-
+      if (playerAngle == 0) {
+        setAngleMultiplier(prev => prev + 1)
+      }
+     
       
      changeturnSfx.play()
         loopPlay()
@@ -108,6 +111,11 @@ function Game({isOwner, roomIDProp} : Props) {
       setWord(serverWord)
       console.log(playerAngle)
       setArrowAngle(playerAngle)
+      if (playerAngle == 0) {
+        setAngleMultiplier(prev => prev + 1)
+      }
+     
+     
      
 
      changeturnSfx.play()
@@ -120,12 +128,12 @@ function Game({isOwner, roomIDProp} : Props) {
     })
     socket.on('recieve-players-names', (recievedList : Array<string>) => {
         setPlayerList(recievedList)
-        console.log('recieved players')
+        // console.log('recieved players')
     })
 
 
     socket.on('send-lobby', () => {
-      console.log('send-home')
+      // console.log('send-home')
       setShowHome(true)
     })
 
@@ -147,7 +155,7 @@ function Game({isOwner, roomIDProp} : Props) {
     })
 
     socket.on('kicked', () => {
-      console.log('kicked')
+      // console.log('kicked')
       socket.disconnect()
       setShowHome(true)
       setTimeout(() => {
@@ -251,7 +259,7 @@ function Game({isOwner, roomIDProp} : Props) {
         
           
           <img src={tablePicture} className='self-center'/>
-            <img src={pistolPicture} alt="arrow" style={{position: 'absolute', left : '35%', top: '50%', transform: `translate(0%, -50%) rotate(${(arrowAngle * 45)}deg)`, zIndex:'1', width : 'auto', height: '5em', transition:'0.3s ease-in-out'}}/>
+            <img src={pistolPicture} alt="arrow" style={{position: 'absolute', left : '35%', top: '50%', transform: `translate(0%, -50%) rotate(${((angleMultiplier * 360) + (arrowAngle * 45))}deg)`, zIndex:'1', width : 'auto', height: '5em', transition: arrowAngle === 8 ? '' : 'transform 0.3s ease-in-out' }}/>
           
 
 
