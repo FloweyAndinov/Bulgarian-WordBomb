@@ -175,10 +175,10 @@ function sendKick (player : string) {
      <AccordionItem value="item-3">
             <AccordionTrigger onClick={() => {play()}}>players list</AccordionTrigger>
             <AccordionContent>
-              {playerList ? playerList.map((player) => 
+              {playerList ? playerList.map((player, index) => 
               <div className="my-3 flex flex-row justify-between">
                 <span className="my-auto ml-4">{player}</span>
-                <Button onClick={() => {sendKick(player); play()}}>Kick</Button>
+                <Button disabled={index==0} onClick={() => {sendKick(player); play()}}>Kick</Button>
               </div>) : null}
             </AccordionContent>
         </AccordionItem>
