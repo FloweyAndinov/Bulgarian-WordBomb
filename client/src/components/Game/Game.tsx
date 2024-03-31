@@ -3,8 +3,8 @@ import { Socket } from 'socket.io-client';
 import WordSection from '../WordSection/WordSection';
 import Home from '../Home/Home';
 import styles from '../Game/Game.module.scss'
-import bombPicture from '../../assets/bomb.png'
-import arrowPicture from '../../assets/arrow.png'
+import tablePicture from '@/assets/table.svg'
+import pistolPicture from '@/assets/pistol.png'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import PlayerSettings from '../GameSettings/PlayerSettings';
 import OwnerSettings from '../GameSettings/OwnerSettings';
@@ -21,6 +21,7 @@ import bomb_clock_sound from '@/assets/sfx/Clock.wav'
 import bomb_fuse_sound from '@/assets/sfx/Bomb_Fuse.wav'
 import change_turn_sounds from '@/assets/sfx/Change_Turn.wav'
 import wrong_sound from '@/assets/sfx/Wrong_Word.mp3'
+import { BugPlay } from 'lucide-react';
 
 
 
@@ -44,6 +45,7 @@ function Game({isOwner, roomIDProp} : Props) {
   const [bombfuseSfx] =useState(new Audio(bomb_fuse_sound))
   const [changeturnSfx] =useState(new Audio(change_turn_sounds))
   const [wrongSfx] =useState(new Audio(wrong_sound))
+  const [debug, setDebug] = useState(false)
   
 
   bombclockSfx.preload = 'metadata'
@@ -174,11 +176,47 @@ function Game({isOwner, roomIDProp} : Props) {
     sfxSetup()
   }
 
-  const playerStyle  = (index : number) : CSSProperties => ({
-    position: 'fixed',
-    width: 'max-content',
-    transform: `translate(-50%, -50%) rotate(${index * 45}deg) translate(clamp(5rem, 20vw, 20rem)) rotate(-${index * 45}deg)`
-  });
+  function playerStyle (index : number) : CSSProperties 
+  {
+    let translateLength = 15;
+    let degrees = 0;
+    if (index!=0) {
+      if (index%4==0) {
+        translateLength = 15;
+      }
+      else if (index%2==0) {
+        translateLength = 13;
+        
+      }
+      else if (index%2==1) {
+        translateLength = 14;
+      }
+    }
+    let degreeOffset = 5;
+    switch (index) {
+      case 1 :
+        degrees = degreeOffset;
+        break;
+      case 3:
+        degrees = -degreeOffset;
+        break;
+      case 5 :
+        degrees = degreeOffset;
+        break;
+      case 7:
+        degrees = -degreeOffset;
+        break;
+      default:
+        degrees = 0;
+    }
+    return (
+      {
+      position: 'fixed',
+      width: 'max-content',
+      transform: `translate(-50%, -50%) rotate(${(index * 45) - degrees}deg) translate(${translateLength}em) rotate(-${(index * 45) - degrees}deg)`
+    }
+    )
+  };
 
   if (showHome) {
     stop()
@@ -188,27 +226,33 @@ function Game({isOwner, roomIDProp} : Props) {
     
     <>
     
-    <div>Game</div>
+    
+
+    {debug ? 
     <div>
       <span>{roomID} : room ID</span>
       <br />
       <span>{socket.id.slice(-6)} : user ID</span>
-    </div>
+    </div> : 
+    null}
 
-    <div style={{position:'fixed', right : '5vw', top: '2em', width : '20em', display:'flex', justifyContent:'flex-end'}}>
+    <div style={{position:'relative', left : '85vw', top: '2em', width : '15vw', display:'flex', justifyContent:'space-evenly'}}>
+      <Button style={{opacity:'50%'}} variant='ghost' onClick={() => {setDebug(!debug)}}>
+        <BugPlay />
+      </Button>
+
+
       {ownership ? <OwnerSettings roomID={roomID}/> : <PlayerSettings roomID={roomID}/>}
-
-  
     </div>
 
 
-    <div className='' style={{position:'fixed', height:'10em', width:'10em', top:'40vh', left:'50vw', display:'flex', transform:'translate(-50%, -50%)'}}>
+    <div className='' style={{position:'relative', height:'25em', width:'25em', top:'25em', left:'50vw', display:'flex', transform:'translate(-50%, -50%)'}}>
         
         
-          <div className='self-center bg-orange-900' style={{}}>
-          <img src={bombPicture} className='self-center'/>
-            <img src={arrowPicture} alt="arrow" style={{position: 'absolute', left : '50%', top: '50%', transformOrigin: 'center left',  transform: `translate(0%, -50%) rotate(${arrowAngle * 45}deg)`, zIndex:'0', opacity:'30%', width : '10vw', height: '10vh', transition:'0.3s ease-in-out'}}/>
-          </div>
+          
+          <img src={tablePicture} className='self-center'/>
+            <img src={pistolPicture} alt="arrow" style={{position: 'absolute', left : '35%', top: '50%', transform: `translate(0%, -50%) rotate(${(arrowAngle * 45)}deg)`, zIndex:'1', width : 'auto', height: '5em', transition:'0.3s ease-in-out'}}/>
+          
 
 
         
@@ -219,27 +263,35 @@ function Game({isOwner, roomIDProp} : Props) {
             <AvatarImage src="https://github.com/shadcn.png" />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
-          <span className='mx-auto '>{player}</span>
+          <span className='mx-auto'>{player}</span>
         </div>
         ))}
         </div>
         
-      
-      <div className='flex flex-col' style={{position:'absolute', width:'max-content', height:'100px', top:'13em', left:'-1em'}}>
-        <span style={{width: 'max-content'}}>Write a word that cointains</span>
-        <br />
-        <span style={{color: 'red', textAlign:'center'}}>{word}</span>
-      </div>
+     
 
 
     </div>
+
+     
+    {gameStarted ? <div className='flex flex-col' style={{position:'relative', width:'max-content', height:'100px', bottom:'-20em', justifyContent:'center', left:'50%', transform:'translateX(-50%)'}}>
+        <span style={{width: 'max-content', fontSize:'1.5em'}}>Write a word that cointains</span>
+        <br />
+        <span style={{fontSize:'1.5em', color:'red', textAlign:'center'}}>{word}</span>
+        {gameStarted ? <WordSection socket={socket} enabled={playType} word={word} playerword={playerWord} roomIDProp={roomID} /> : null}
+      </div>
+       :
+       <div className='flex flex-col' style={{position:'fixed', width:'max-content', height:'100px', top:'5em', justifyContent:'center', left:'50%', transform:'translateX(-50%)'}}>
+        <span style={{width: 'max-content', fontSize:'1.5em'}}>Waiting for host to start game</span>
+        </div>
+        }
     
     
     <div className={styles.textsend}>
-      {gameStarted ? <WordSection socket={socket} enabled={playType} word={word} playerword={playerWord} roomIDProp={roomID} /> : null}
+      
       </div>
       <div style={{position:'fixed', bottom:'10vh', left:'50%', transform:'translateX(-50%)'}}>
-          {ownership && !gameStarted? <Button disabled={playerList.length <= 1 ? true : false} onClick={createGame}>Start Game</Button> : null}
+          {ownership && !gameStarted? <Button style={{fontSize:'1.5em', padding:'1em'}} disabled={playerList.length <= 1 ? true : false} onClick={createGame}>Start Game</Button> : null}
       </div>
       <Toaster/>
     </>
