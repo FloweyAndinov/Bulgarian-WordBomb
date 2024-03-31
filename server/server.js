@@ -102,6 +102,8 @@ let gamesMap = new Map();
 
 let namesMap = new Map(); // id : name
 
+let avatarsMap = new Map(); //id : link
+
 let roomsMap = new Map();
 
 const deadString = '______' //this replaces id when player dies
@@ -156,7 +158,28 @@ io.on('connection', (socket) => {
     });
 
     socket.on('set-name', (name) => {
+        const findInMap = (map, val) => {
+            for (let [k, v] of map) {
+              if (v === val) { 
+                return true; 
+              }
+            }  
+            return false;
+          }
+
+
+        if (findInMap(namesMap, name) == false)
         namesMap.set(socket.id, name);
+        else {
+            while (true) {
+                console.log("name was duplicate, will get random name")
+                let random = Math.floor(Math.random() * 1000)
+                if (findInMap(namesMap, name + random.toString()) == false) {
+                    namesMap.set(socket.id, name + random.toString());
+                    break;
+                }
+            }
+        }
         //console.log("name added")
     })
 
@@ -303,6 +326,36 @@ io.on('connection', (socket) => {
                 }
             })
         }
+    })
+
+    socket.on('request-avatar', (roomID) => {
+        const room = io.sockets.adapter.rooms.get(roomID);
+        const ids = Array.from(room);
+        let localavatarsMap = new Map()
+        ids.forEach ((id) => {
+            let name = namesMap.get(id)
+            localavatarsMap.set(name, avatarsMap.get(id))
+            
+        })
+        console.log(localavatarsMap)
+        io.to(roomID).emit('recieve-avatars', Object.fromEntries(localavatarsMap))
+    })
+
+    socket.on('set-avatar', (url, roomID) => {
+        avatarsMap.set(socket.id, url)
+        
+
+        const room = io.sockets.adapter.rooms.get(roomID);
+        const ids = Array.from(room);
+        let localavatarsMap = new Map()
+        ids.forEach ((id) => {
+            let name = namesMap.get(id)
+            localavatarsMap.set(name, avatarsMap.get(id))
+            
+        })
+        console.log(localavatarsMap)
+        io.to(roomID).emit('recieve-avatars', Object.fromEntries(localavatarsMap))
+        
     })
 
     socket.on('start-game', (roomID) => {

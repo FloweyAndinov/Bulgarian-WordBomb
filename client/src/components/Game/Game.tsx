@@ -23,6 +23,7 @@ import bomb_fuse_sound from '@/assets/sfx/Bomb_Fuse.wav'
 import change_turn_sounds from '@/assets/sfx/Change_Turn.wav'
 import wrong_sound from '@/assets/sfx/Wrong_Word.mp3'
 import { BugPlay } from 'lucide-react';
+import links from '@/components/AvatarPicture/AvatarPictures'
 
 
 
@@ -32,6 +33,7 @@ interface Props {
 }
 
 function Game({isOwner, roomIDProp} : Props) {
+  
 
   const [showHome, setShowHome] = useState(false)
   const [word, setWord] = useState("")
@@ -48,6 +50,7 @@ function Game({isOwner, roomIDProp} : Props) {
   const [wrongSfx] =useState(new Audio(wrong_sound))
   const [debug, setDebug] = useState(false)
   const [angleMultiplier, setAngleMultiplier] = useState(0)
+  const [avatarsMap, setAvatarsMap] = useState(new Map<string, number>())
   
 
   bombclockSfx.preload = 'metadata'
@@ -77,9 +80,9 @@ function Game({isOwner, roomIDProp} : Props) {
     bombclockSfx.playbackRate += 0.01
     bombclockSfx.currentTime = 0
   }
+
   useEffect(() => {
 
-    
 
     let id = socket.id.slice(-6);
     if (isOwner) {
@@ -91,6 +94,7 @@ function Game({isOwner, roomIDProp} : Props) {
         setRoomID(roomIDProp);
         socket.emit('join-room', roomIDProp);
     }
+    
 
     //event for *play word* and *wait for word*
     socket.on('play-type', (serverWord : string, playerAngle : number) => {
@@ -132,6 +136,7 @@ function Game({isOwner, roomIDProp} : Props) {
         // console.log('recieved players')
     })
 
+    socket.emit('request-avatars', (roomID))
 
     socket.on('send-lobby', () => {
       // console.log('send-home')
@@ -146,6 +151,16 @@ function Game({isOwner, roomIDProp} : Props) {
     };
 
     socket.emit('check-ownership')
+
+    socket.on('recieve-avatars', (avatarsMap) => {
+      let localavatarsMap = new Map()
+      Object.entries(avatarsMap).forEach((key) => {
+        localavatarsMap.set(key[0], key[1])
+      })
+      setAvatarsMap(localavatarsMap)
+      console.log(avatarsMap)
+      console.log(localavatarsMap)
+    })
 
     socket.on('ownership-confirmed', () => {
       setOwnership(true)
@@ -231,6 +246,8 @@ function Game({isOwner, roomIDProp} : Props) {
     stop()
     return <Home socket={socket}/>
   }
+
+  let avatarLinks = links()
   return (
     
     <>
@@ -269,7 +286,7 @@ function Game({isOwner, roomIDProp} : Props) {
         {playerList.map((player, index) => (  
         <div className='' key={player} style={{display:'flex', flexDirection:'column', ...playerStyle(index)}}>
           <Avatar className='mx-auto my-2' style={{width : '4em', height:'auto'}}>
-            <AvatarImage src="https://github.com/shadcn.png" />
+            <AvatarImage src={avatarLinks.get(avatarsMap.get(player) || 1)} style={{pointerEvents:'none'}}/>
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
           <span className='mx-auto text-2xl'>{player}</span>

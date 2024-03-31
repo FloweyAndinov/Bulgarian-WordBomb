@@ -33,6 +33,7 @@ import { Switch } from "@/components/ui/switch"
 import { socket } from "@/socket";
 
 import settings_sound from '@/assets/sfx/Settings_Buttons.mp3'
+import ProfileIcons from "../ProfileIcon/ProfileIcons";
 
 
 
@@ -105,7 +106,7 @@ const PlayerSettings = ({roomID} : props) => {
         <AccordionItem value="item-2">
           <AccordionTrigger onClick={play}>player icon</AccordionTrigger>
           <AccordionContent>
-          <span>functionality coming soon</span>
+          <ProfileIcons roomID={roomID}/>
           </AccordionContent>
      </AccordionItem>
 

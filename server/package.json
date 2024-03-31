@@ -19,6 +19,7 @@
     "timeout-refresh": "^2.0.1"
   },
   "devDependencies": {
+    "@types/webpack-env": "^1.18.4",
     "nodemon": "^3.0.2"
   }
 }

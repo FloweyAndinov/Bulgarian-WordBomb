@@ -33,6 +33,7 @@ import { Switch } from "@/components/ui/switch"
 import { socket } from "@/socket";
 
 import settings_sound from '@/assets/sfx/Settings_Buttons.mp3'
+import ProfileIcons from "../ProfileIcon/ProfileIcons";
 
 
 interface props {
@@ -167,7 +168,7 @@ function sendKick (player : string) {
         <AccordionItem value="item-2">
           <AccordionTrigger onClick={play}>player icon</AccordionTrigger>
           <AccordionContent>
-          <span>functionality coming soon</span>
+          <ProfileIcons roomID={roomID}/>
           </AccordionContent>
      </AccordionItem>
 
@@ -192,7 +193,7 @@ function sendKick (player : string) {
     <Tooltip>
           <TooltipTrigger style={{borderBottom : '2px dotted grey'}}>You're in streamer mode</TooltipTrigger>
     <TooltipContent>
-          <p>Streamer mode allows you to hide sensitive information</p>
+          <h3>Streamer mode allows you to hide sensitive information</h3>
     </TooltipContent>
   </Tooltip>
 </TooltipProvider>
@@ -202,7 +203,7 @@ function sendKick (player : string) {
 <Tooltip>
       <TooltipTrigger style={{borderBottom : '2px dotted grey'}}>You're in casual mode</TooltipTrigger>
 <TooltipContent>
-      <p>Streamer mode allows you to hide sensitive information</p>
+      <h3>Streamer mode allows you to hide sensitive information</h3>
 </TooltipContent>
 </Tooltip>
 </TooltipProvider>}
