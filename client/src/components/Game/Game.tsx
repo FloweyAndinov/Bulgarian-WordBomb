@@ -5,6 +5,7 @@ import Home from '../Home/Home';
 import styles from '../Game/Game.module.scss'
 import tablePicture from '@/assets/table.svg'
 import pistolPicture from '@/assets/pistol.png'
+import background from '@/assets/game_bg.svg'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import PlayerSettings from '../GameSettings/PlayerSettings';
 import OwnerSettings from '../GameSettings/OwnerSettings';
@@ -235,7 +236,7 @@ function Game({isOwner, roomIDProp} : Props) {
     <>
     
     
-
+    <div style={{height : '100vh', width : '100vw', position : 'fixed', backgroundImage : `url(${background})`, opacity : '10%', }}/>
     {debug ? 
     <div>
       <span>{roomID} : room ID</span>
