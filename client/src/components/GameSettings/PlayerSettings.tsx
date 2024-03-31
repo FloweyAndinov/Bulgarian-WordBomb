@@ -127,7 +127,7 @@ const PlayerSettings = ({roomID} : props) => {
               {streamerMode ? 
   <TooltipProvider>
     <Tooltip>
-          <TooltipTrigger>You're in streamer mode</TooltipTrigger>
+          <TooltipTrigger style={{borderBottom : '2px dotted grey'}}>You're in streamer mode</TooltipTrigger>
     <TooltipContent>
           <p>Streamer mode allows you to hide sensitive information</p>
     </TooltipContent>
@@ -137,7 +137,7 @@ const PlayerSettings = ({roomID} : props) => {
 : 
 <TooltipProvider>
 <Tooltip>
-      <TooltipTrigger>You're in casual mode</TooltipTrigger>
+      <TooltipTrigger style={{borderBottom : '2px dotted grey'}}>You're in casual mode</TooltipTrigger>
 <TooltipContent>
       <p>Streamer mode allows you to hide sensitive information</p>
 </TooltipContent>

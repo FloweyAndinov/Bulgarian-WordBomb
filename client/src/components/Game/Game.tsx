@@ -259,8 +259,8 @@ function Game({isOwner, roomIDProp} : Props) {
         
         
           
-          <img src={tablePicture} className='self-center'/>
-            <img src={pistolPicture} alt="arrow" style={{position: 'absolute', left : '35%', top: '50%', transform: `translate(0%, -50%) rotate(${((angleMultiplier * 360) + (arrowAngle * 45))}deg)`, zIndex:'1', width : 'auto', height: '5em', transition: arrowAngle === 8 ? '' : 'transform 0.3s ease-in-out' }}/>
+          <img src={tablePicture} className='self-center' style={{pointerEvents:'none'}}/>
+          <img src={pistolPicture} alt="arrow" style={{pointerEvents:'none', position: 'absolute', left : '35%', top: '50%', transform: `translate(0%, -50%) rotate(${((angleMultiplier * 360) + (arrowAngle * 45))}deg)`, zIndex:'1', width : 'auto', height: '5em', transition: arrowAngle === 8 ? '' : 'transform 0.3s ease-in-out' }}/>
           
 
 
