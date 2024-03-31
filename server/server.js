@@ -289,8 +289,8 @@ io.on('connection', (socket) => {
             }
         })
 
-        if (socket.id.slice(-6) == room) {
-            gamesMap.get(room).PassTurn('fail')
+        if (socket.id.slice(-6) == room) { //verify the owner sent this event
+            TimedOutTurn(room)
             RemoveAlive(room, player)
             const roomObject = io.sockets.adapter.rooms.get(room);
             const ids = Array.from(roomObject);
