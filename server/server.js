@@ -267,7 +267,7 @@ io.on('connection', (socket) => {
         let nextIndex = nextObj.index
         let nextSyllable = gamesMap.get(roomID).GenerateSyllable()
 
-        io.to(roomID).emit('play-wait',nextSyllable, nextIndex);
+        io.to(roomID).except(nextPerson).emit('play-wait',nextSyllable, nextIndex);
         io.to(nextPerson).emit('play-type',nextSyllable, nextIndex);
         console.log("passed turn")
     }
@@ -361,7 +361,7 @@ io.on('connection', (socket) => {
    
    
                    //console.log(nextPerson)
-                   io.to(roomID).emit('play-wait',nextSyllable, nextIndex);
+                   io.to(roomID).except(nextPerson).emit('play-wait',nextSyllable, nextIndex);
                    io.to(nextPerson).emit('play-type',nextSyllable, nextIndex);
                    
                 }
