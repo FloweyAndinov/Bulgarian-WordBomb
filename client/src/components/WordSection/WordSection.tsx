@@ -15,7 +15,7 @@ interface EnabledProps {
     roomIDProp : string
     word: string
 }
-function WordSection({socket, enabled, roomIDProp, word}: Props) {
+function WordSection({socket, enabled, roomIDProp, word, playerword}: Props) {
     const [typeable, setTypeable] = useState(false)
     const [roomId, setRoomID] = useState<string>("")    
 
@@ -44,7 +44,7 @@ function WordSection({socket, enabled, roomIDProp, word}: Props) {
 
   return (
     <>
-    {typeable? <Enabled socket={socket} roomIDProp={roomId} word={word}/> : <Disabled/>}
+    {typeable? <Enabled socket={socket} roomIDProp={roomId} word={word}/> : <Disabled otherPlayerWord={playerword} currentWord={word}/>}
     </>
   )
 
@@ -83,17 +83,20 @@ function Enabled({socket, roomIDProp, word}: EnabledProps) {
         if (event.code == "Backspace") {
           chars.current = chars.current.slice(0, -1)
           setPlayerWord(chars.current)
+           socket.emit('recieve-preview-word', chars.current, roomIDProp)
           return
         }
         if (event.code == "Space" || event.code == "Delete") {
           chars.current = "";
           setPlayerWord(chars.current)
+         socket.emit('recieve-preview-word', chars.current, roomIDProp)
           return
         }
         if (event.key.length > 1)
           return
         chars.current = chars.current + event.key
         setPlayerWord(chars.current)
+        socket.emit('recieve-preview-word', chars.current, roomIDProp)
         
       }
 
@@ -136,10 +139,38 @@ function Enabled({socket, roomIDProp, word}: EnabledProps) {
     )
 }
 
-const Disabled = () => {
+interface DisabledProps {
+  currentWord : string
+otherPlayerWord : string | "error"
+}
+const Disabled = ({otherPlayerWord, currentWord} : DisabledProps) => {
+
+
+  useEffect(() => {
+    console.log(otherPlayerWord, otherPlayerWord.length)
+    }, [otherPlayerWord])
+
+
     return (
         <>
-        <span>Disabled</span>
+         <div style={{display:'flex', height : '1.5em', justifyContent:'center'}}>
+        {otherPlayerWord.length < 1 ? 
+
+        <div style={{borderRadius : '5px', fontSize:'2em', width:'1em', height : '1.5em', backgroundColor : 'brown', textAlign:'center', margin:'0.1em'}}></div>
+        
+        :
+
+
+        otherPlayerWord.split('').map((char, index) => (
+          
+        currentWord[0].includes(char) && currentWord[1].includes(otherPlayerWord[index + 1]) ||  currentWord[1].includes(char) && currentWord[0].includes(otherPlayerWord[index - 1])
+        ? 
+        <div style={{borderRadius : '5px', fontSize:'2em', width:'1em', height : '1.5em', backgroundColor : 'green', textAlign:'center', margin:'0.1em'}}> {char} </div>
+          : 
+        <div style={{borderRadius : '5px', fontSize:'2em', width:'1em', height : '1.5em', backgroundColor : 'brown', textAlign:'center', margin:'0.1em'}}> {char} </div>
+
+        ))}
+        </div>
         </>
     )
 }

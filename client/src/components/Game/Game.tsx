@@ -127,7 +127,7 @@ function Game({isOwner, roomIDProp} : Props) {
       loopPlay()
       
     })
-    socket.on('recieve-player-word', (playerWord : string) => {
+    socket.on('broadcast-preview-word', (playerWord : string) => {
       setPlayerWord(playerWord)
       
     })

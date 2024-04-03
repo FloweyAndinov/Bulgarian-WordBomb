@@ -267,6 +267,11 @@ io.on('connection', (socket) => {
         //send everyone to game screen
         io.to(roomID).emit('send-game-screen');
     });
+    socket.on('recieve-preview-word', (word, roomID) => {
+        io.to(roomID).except(socket.id).emit('broadcast-preview-word', word);
+        console.log("word" , word , " RoomID" , roomID);
+    }
+    )
 
     function TimedOutTurn(roomID) {
         try {
