@@ -190,6 +190,7 @@ io.on('connection', (socket) => {
     })
 
     socket.on('unlock-room', (room) => {
+        console.log("unlocked room", room, socket.id.slice(-6))
         if (socket.id.slice(-6) == room) {
             roomsMap.get(room).locked = false
         }
@@ -364,6 +365,7 @@ io.on('connection', (socket) => {
     })
 
     socket.on('start-game', (roomID) => {
+        roomsMap.get(roomID).locked = true
         const room = io.sockets.adapter.rooms.get(roomID);
         const ids = Array.from(room);
 
