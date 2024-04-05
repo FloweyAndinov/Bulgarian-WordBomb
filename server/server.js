@@ -258,10 +258,12 @@ io.on('connection', (socket) => {
         socket.leave(room);
 
         const roomID = io.sockets.adapter.rooms.get(room);
-        const ids = Array.from(roomID);
+        if (roomID!=undefined) {
+            const ids = Array.from(roomID);
 
-        let namesArray = GetNameArray(ids)
-        io.to(room).emit('recieve-players-names', namesArray);
+            let namesArray = GetNameArray(ids)
+            io.to(room).emit('recieve-players-names', namesArray);
+        }
     });
 
     socket.on('get-ids' , (roomID) => {
