@@ -22,6 +22,7 @@ import styled, { css, keyframes } from "styled-components";
 import LetterBackground from '../LetterBackground/LetterBackground';
 import { toast } from 'sonner';
 import Game from '../Game/Game';
+import { BugPlay } from 'lucide-react';
 
 
 
@@ -39,6 +40,8 @@ function Home( {socket}: Props) {
     const [showJoinInvite, setShowJoinInvite] = useState(false);
     const [roomID, setRoomID] = React.useState<string>('');
     const [joinedRoom, setJoinedRoom] = React.useState<boolean>(false);
+    const [debug, setDebug] = useState(false)
+
 
     
     
@@ -94,11 +97,28 @@ function Home( {socket}: Props) {
 
         <LetterBackground/>
 
-        <div style={{position:'fixed', display:'flex', right:0 , marginRight:'5vw', marginTop: '1em'}}>
+        <div style={{position:'fixed', display:'flex', right:0 , marginRight:'5vw', marginTop: '1em',alignItems:'center'}}>
+        <Button style={{opacity:'50%'}} variant={debug ? "destructive" : "ghost"} onClick={() => {setDebug(!debug)}}>
+        <BugPlay />
+      </Button>
       <ThemeSwitch/>
       {/* <LanguageSwitch language="en" passLanguage={(language : string) => { ChangeLanguage(language)}} /> */}
       
       </div>
+
+      {debug ? 
+    <div>
+      <div style={{position:'fixed'}}>
+      <span>{roomID} : room ID</span>
+      <br />
+      <span>{socket.id? socket.id.slice(-6) : 'error'} : user ID</span>
+      </div>
+    </div> : 
+    null}
+
+<div style={{position:'relative', left : '85vw', top: '2em', width : '15vw', display:'flex', justifyContent:'space-evenly'}}>
+      
+    </div>
       
       <div style={{position: 'relative', display:'flex', flexDirection:'column', width:'fit-content', left: '5vw', top: '30vh'}}>
         <CreateButton socket={socket} callParentFunction={() => createRoom()}/>
@@ -113,6 +133,7 @@ function Home( {socket}: Props) {
     
     <div style={{position: 'fixed', float:'right', right: '5vw', bottom: '5vh'}}>
       <ConnectButton/>
+      
       </div>
       <Toaster />
     </>
