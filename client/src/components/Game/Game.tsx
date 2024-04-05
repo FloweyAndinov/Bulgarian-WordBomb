@@ -75,10 +75,17 @@ function Game({isOwner, roomIDProp} : Props) {
     bombfuseSfx.play()
 
   }
-  function stop() {
+  function changeTurn() {
     bombclockSfx.pause()
     bombclockSfx.playbackRate += 0.01
     bombclockSfx.currentTime = 0
+  }
+
+  function stopSfx() {
+    bombclockSfx.pause()
+    bombfuseSfx.pause()
+    bombclockSfx.currentTime = 0
+    bombfuseSfx.currentTime = 0
   }
 
   useEffect(() => {
@@ -139,7 +146,10 @@ function Game({isOwner, roomIDProp} : Props) {
     socket.emit('request-avatars', (roomID))
 
     socket.on('send-lobby', () => {
-      // console.log('send-home')
+      if (isOwner) {
+        socket.emit('unlock-room', roomID)
+      }
+      stopSfx()
       setShowHome(true)
     })
 
@@ -172,6 +182,7 @@ function Game({isOwner, roomIDProp} : Props) {
 
     socket.on('kicked', () => {
       // console.log('kicked')
+      stopSfx()
       socket.disconnect()
       setShowHome(true)
       setTimeout(() => {
@@ -256,14 +267,16 @@ function Game({isOwner, roomIDProp} : Props) {
     <div style={{height : '100vh', width : '100vw', position : 'fixed', backgroundImage : `url(${background})`, opacity : '10%', }}/>
     {debug ? 
     <div>
+      <div style={{position:'fixed'}}>
       <span>{roomID} : room ID</span>
       <br />
-      <span>{socket.id.slice(-6)} : user ID</span>
+      <span>{socket.id? socket.id.slice(-6) : 'error'} : user ID</span>
+      </div>
     </div> : 
     null}
 
     <div style={{position:'relative', left : '85vw', top: '2em', width : '15vw', display:'flex', justifyContent:'space-evenly'}}>
-      <Button style={{opacity:'50%'}} variant='ghost' onClick={() => {setDebug(!debug)}}>
+      <Button style={{opacity:'50%'}} variant={debug ? "destructive" : "ghost"} onClick={() => {setDebug(!debug)}}>
         <BugPlay />
       </Button>
 
