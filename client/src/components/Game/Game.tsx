@@ -12,7 +12,6 @@ import OwnerSettings from '../GameSettings/OwnerSettings';
 import { Toaster } from "@/components/ui/sonner"
 import { spawn } from 'child_process';
 import { Button } from '../ui/button';
-import { socket } from '@/socket';
 import { toast } from 'sonner';
  // @ts-ignore
 import Timeout from 'timeout-refresh'
@@ -24,15 +23,20 @@ import change_turn_sounds from '@/assets/sfx/Change_Turn.wav'
 import wrong_sound from '@/assets/sfx/Wrong_Word.mp3'
 import { BugPlay } from 'lucide-react';
 import links from '@/components/AvatarPicture/AvatarPictures'
+import ReactDOM from 'react-dom';
 
 
 
 interface Props {
   isOwner: boolean;
   roomIDProp: string;
+  socket : Socket;
+  clearGame: (newValue: boolean) => void ;
 }
 
-function Game({isOwner, roomIDProp} : Props) {
+
+
+function Game({isOwner, roomIDProp, socket, clearGame} : Props) {
   
 
   const [showHome, setShowHome] = useState(false)
@@ -51,6 +55,7 @@ function Game({isOwner, roomIDProp} : Props) {
   const [debug, setDebug] = useState(false)
   const [angleMultiplier, setAngleMultiplier] = useState(0)
   const [avatarsMap, setAvatarsMap] = useState(new Map<string, number>())
+  const [userID , setUserID] = useState("")
   
 
   bombclockSfx.preload = 'metadata'
@@ -91,7 +96,12 @@ function Game({isOwner, roomIDProp} : Props) {
   useEffect(() => {
 
 
-    let id = socket.id.slice(-6);
+    const checkId = setInterval(() => {
+        setUserID(socket.id.slice(-6))
+      }, 1000)
+    
+    let id = socket.id.slice(-6)
+    console.log(id, "is the user id")
     if (isOwner) {
         setRoomID(id);
         // console.log("owner created room")
@@ -146,14 +156,16 @@ function Game({isOwner, roomIDProp} : Props) {
     socket.emit('request-avatars', (roomID))
 
     socket.on('send-lobby', () => {
+      clearInterval(checkId)
       if (isOwner) {
         socket.emit('unlock-room', roomID)
       }
       stopSfx()
-      setShowHome(true)
+      clearGame(false)
     })
 
     const handleBeforeUnload = () => {
+      
       if(isOwner) {
         socket.emit('delete-room', roomID)
       }
@@ -205,6 +217,8 @@ function Game({isOwner, roomIDProp} : Props) {
     
     
   }, [])
+
+  
 
   function createGame () {
     socket.emit('start-game', socket.id.slice(-6))
@@ -270,7 +284,7 @@ function Game({isOwner, roomIDProp} : Props) {
       <div style={{position:'fixed'}}>
       <span>{roomID} : room ID</span>
       <br />
-      <span>{socket.id? socket.id.slice(-6) : 'error'} : user ID</span>
+      <span>{userID ? userID : 'error'} : user ID</span>
       </div>
     </div> : 
     null}

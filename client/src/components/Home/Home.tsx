@@ -23,6 +23,7 @@ import LetterBackground from '../LetterBackground/LetterBackground';
 import { toast } from 'sonner';
 import Game from '../Game/Game';
 import { BugPlay } from 'lucide-react';
+import ReactDOM from 'react-dom';
 
 
 
@@ -41,12 +42,11 @@ function Home( {socket}: Props) {
     const [roomID, setRoomID] = React.useState<string>('');
     const [joinedRoom, setJoinedRoom] = React.useState<boolean>(false);
     const [debug, setDebug] = useState(false)
+    const [userID , setUserID] = useState("")
 
-
-    
     
     useEffect(() => {
-        console.log(query)
+    
 
         socket.on('connect', () => {
             
@@ -55,6 +55,7 @@ function Home( {socket}: Props) {
                 socket.emit('join-room-window', query);
             }
         });
+    
         
         socket.on('joined-room-window' , () => {
             ActivateJoinInvite()
@@ -69,27 +70,37 @@ function Home( {socket}: Props) {
         socket.on('join-room-denied', () => {
             toast("Error in joining room. Room might be locked.")
             })
+
+            
     }, [socket]);
 
    function createRoom() {
     setShowCreate(true) 
    }
 
+   const clearGame = (bool : boolean) => {
+    setShowCreate(bool)
+    setJoinedRoom(bool)
+    setShowJoinInvite(bool)
+    }
+
    if (showCreate) {
-    return <Game isOwner={true} roomIDProp={roomID}/>
-}
+    return <Game isOwner={true} roomIDProp={roomID} socket={socket} clearGame={clearGame}/>
+    }
     function ActivateJoinInvite() {
         setShowJoinInvite(true)
     }
 
     if (joinedRoom) {
-       return <Game isOwner={false} roomIDProp={roomID}/> 
+       return <Game isOwner={false} roomIDProp={roomID} socket={socket} clearGame={clearGame}/> 
     }
 
     if (showJoinInvite) {
         if (query) 
-        return <Game isOwner={false} roomIDProp={query}/>
+        return <Game isOwner={false} roomIDProp={query} socket={socket} clearGame={clearGame}/>
     }
+
+    
 
     
   return (
@@ -111,7 +122,7 @@ function Home( {socket}: Props) {
       <div style={{position:'fixed'}}>
       <span>{roomID} : room ID</span>
       <br />
-      <span>{socket.id? socket.id.slice(-6) : 'error'} : user ID</span>
+      <span>{userID ? userID : 'error'} : user ID</span>
       </div>
     </div> : 
     null}

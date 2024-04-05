@@ -193,6 +193,7 @@ io.on('connection', (socket) => {
         console.log("unlocked room", room, socket.id.slice(-6))
         if (socket.id.slice(-6) == room) {
             roomsMap.get(room).locked = false
+            socket.leave(room)
         }
     })
 
@@ -460,6 +461,7 @@ io.on('connection', (socket) => {
       });
 
     socket.on('delete-room', (roomId) => {
+        console.log("deleting room " + roomId)
         io.to(roomId).emit('send-lobby');
         io.in(roomId).socketsLeave(roomId);
 
