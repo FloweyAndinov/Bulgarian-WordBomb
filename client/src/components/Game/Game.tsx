@@ -157,7 +157,9 @@ function Game({isOwner, roomIDProp} : Props) {
       if(isOwner) {
         socket.emit('delete-room', roomID)
       }
-      
+      else {
+        socket.emit('leave-room', roomIDProp)
+      }
     };
 
     socket.emit('check-ownership')
@@ -200,9 +202,7 @@ function Game({isOwner, roomIDProp} : Props) {
     // Attach an event listener for the beforeunload event
     window.addEventListener('beforeunload', handleBeforeUnload);
 
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    }
+    
     
   }, [])
 

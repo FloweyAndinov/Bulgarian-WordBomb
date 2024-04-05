@@ -253,8 +253,14 @@ io.on('connection', (socket) => {
     });
 
     socket.on('leave-room', (room) => {// lower priority
+        console.log("leaving room", room, socket.id.slice(-6))
         socket.leave(room);
-        //TODO : put user back in main menu
+
+        const roomID = io.sockets.adapter.rooms.get(room);
+        const ids = Array.from(roomID);
+
+        let namesArray = GetNameArray(ids)
+        io.to(room).emit('recieve-players-names', namesArray);
     });
 
     socket.on('get-ids' , (roomID) => {
