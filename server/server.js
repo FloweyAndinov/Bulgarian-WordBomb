@@ -269,7 +269,7 @@ io.on('connection', (socket) => {
     });
     socket.on('recieve-preview-word', (word, roomID) => {
         io.to(roomID).except(socket.id).emit('broadcast-preview-word', word);
-        console.log("word" , word , " RoomID" , roomID);
+        console.log("word" , word , " RoomID" , roomID , "socketID" , socket.id);
     }
     )
 
