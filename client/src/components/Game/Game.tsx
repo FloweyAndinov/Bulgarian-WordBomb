@@ -63,7 +63,7 @@ function Game({isOwner, roomIDProp} : Props) {
   function loopPlay() {
     bombclockSfx.loop = true
     if (!bombclockSfx.paused) {
-      stop()
+      speedUpSfx() // this happens when changing turns
     }
     bombclockSfx.play()
   }
@@ -75,7 +75,7 @@ function Game({isOwner, roomIDProp} : Props) {
     bombfuseSfx.play()
 
   }
-  function changeTurn() {
+  function speedUpSfx() {
     bombclockSfx.pause()
     bombclockSfx.playbackRate += 0.01
     bombclockSfx.currentTime = 0
