@@ -442,6 +442,9 @@ io.on('connection', (socket) => {
                 
             }
         }
+        else {
+            io.to(roomID).emit('word-submit-denied');
+        }
     })
 
     socket.on('out-of-time', (roomID, userID, user_word, syllable) => {
