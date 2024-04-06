@@ -116,10 +116,10 @@ function sendKick (player : string) {
 
   <SheetContent>
   <SheetHeader>
-    <SheetTitle style={{textAlign:'center', marginBottom:'1rem'}}>Owner controls</SheetTitle>
+    <SheetTitle style={{textAlign:'center', marginBottom:'1rem'}}>Настройки на създател</SheetTitle>
     
     <SheetDescription>
-      <span>Room settings</span>
+      <span>Настройки на стая</span>
 
 
     <Accordion type="single" collapsible>
@@ -127,14 +127,14 @@ function sendKick (player : string) {
 
 
      <AccordionItem value="item-1">
-        <AccordionTrigger onClick={() => {play()}}>Manage room</AccordionTrigger>
+        <AccordionTrigger onClick={() => {play()}}>Настойки на стая</AccordionTrigger>
             <AccordionContent>
               <div className="flex flex-row justify-between my-3">
-              {roomPublic ? <span>Currently room is public</span> : <span>Currently room is private</span>}
+              {roomPublic ? <span>Стаята е публична</span> : <span>Стаята е скрита</span>}
               <Switch checked={roomPublic} onClick={() => {handleRoomPublic(!roomPublic); play()}}/>
               </div>
               <div className="flex flex-row justify-between my-3">
-              {roomLocked ? <span>Currently room is locked</span> : <span>Currently room is unlocked</span>}
+              {roomLocked ? <span>Стаята е заключена</span> : <span>Стаята е отключена</span>}
               <Switch checked={roomLocked} onClick={() => {handleRoomLock(!roomLocked); play()}}/>
               </div>
             </AccordionContent>
@@ -151,10 +151,10 @@ function sendKick (player : string) {
     <Accordion type="single" collapsible>
 
     <AccordionItem value="item-1">
-          <AccordionTrigger onClick={() => {play()}}>Invite players</AccordionTrigger>
+          <AccordionTrigger onClick={() => {play()}}>Покани приятели</AccordionTrigger>
           <AccordionContent>
             <div className="flex flex-row my-2 " style={{marginLeft:'-1rem'}}>
-            <Input readOnly ref={inputRef} defaultValue={streamerMode? 'click to copy' :invitelink} style={{marginLeft:'1rem'}} onClick={handleFocus} />
+            <Input readOnly ref={inputRef} defaultValue={streamerMode? 'Натисни за копиране' :invitelink} style={{marginLeft:'1rem'}} onClick={handleFocus} />
               <Button variant='link' onClick={() => {navigator.clipboard.writeText(invitelink); toast(copyMessage); play()}}>
                 
               <Copy style={{color:'white'}}/>
@@ -166,7 +166,7 @@ function sendKick (player : string) {
 
 
         <AccordionItem value="item-2">
-          <AccordionTrigger onClick={play}>player icon</AccordionTrigger>
+          <AccordionTrigger onClick={play}>Иконки</AccordionTrigger>
           <AccordionContent>
           <ProfileIcons roomID={roomID}/>
           </AccordionContent>
@@ -174,26 +174,26 @@ function sendKick (player : string) {
 
     
      <AccordionItem value="item-3">
-            <AccordionTrigger onClick={() => {play()}}>players list</AccordionTrigger>
+            <AccordionTrigger onClick={() => {play()}}>Списък на играчи</AccordionTrigger>
             <AccordionContent>
               {playerList ? playerList.map((player, index) => 
               <div className="my-3 flex flex-row justify-between">
                 <span className="my-auto ml-4">{player}</span>
-                <Button disabled={index==0} onClick={() => {sendKick(player); play()}}>Kick</Button>
+                <Button disabled={index==0} onClick={() => {sendKick(player); play()}}>Изритай</Button>
               </div>) : null}
             </AccordionContent>
         </AccordionItem>
 
         <AccordionItem value="item-4">
-            <AccordionTrigger onClick={() => {play()}}>Streamer mode</AccordionTrigger>
+            <AccordionTrigger onClick={() => {play()}}>Streamer режим</AccordionTrigger>
             <AccordionContent>
             <div className="flex flex-row justify-between my-3">
               {streamerMode ? 
   <TooltipProvider>
     <Tooltip>
-          <TooltipTrigger style={{borderBottom : '2px dotted grey'}}>You're in streamer mode</TooltipTrigger>
+          <TooltipTrigger style={{borderBottom : '2px dotted grey'}}>Ти си в streamer режим</TooltipTrigger>
     <TooltipContent>
-          <h3>Streamer mode allows you to hide sensitive information</h3>
+          <h3>Streamer режим ти позволява да скриеш важна информация</h3>
     </TooltipContent>
   </Tooltip>
 </TooltipProvider>
@@ -201,9 +201,9 @@ function sendKick (player : string) {
 : 
 <TooltipProvider>
 <Tooltip>
-      <TooltipTrigger style={{borderBottom : '2px dotted grey'}}>You're in casual mode</TooltipTrigger>
+      <TooltipTrigger style={{borderBottom : '2px dotted grey'}}>Ти си в нормарен режим</TooltipTrigger>
 <TooltipContent>
-      <h3>Streamer mode allows you to hide sensitive information</h3>
+      <h3>Streamer режим ти позволява да скриеш важна информация</h3>
 </TooltipContent>
 </Tooltip>
 </TooltipProvider>}

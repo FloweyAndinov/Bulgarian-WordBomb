@@ -76,14 +76,14 @@ const JoinButton = ({callParentFunction} : props) => {
           </AlertDialogTrigger>
           <AlertDialogContent>
           <AlertDialogHeader>
-      <AlertDialogTitle className="pl-1 mx-auto">Select your lobby</AlertDialogTitle>
+      <AlertDialogTitle className="pl-1 mx-auto">Избери си игра</AlertDialogTitle>
       <AlertDialogDescription className="pt-1">
       </AlertDialogDescription>
     </AlertDialogHeader>
     
     <>
     {rooms.length === 0 ? 
-    <span className='text-destructive' style={{textAlign:'center', marginBottom:'1rem'}}>no rooms available</span>
+    <span className='text-destructive' style={{textAlign:'center', marginBottom:'1rem'}}>Няма стаи</span>
     : rooms.map((roomId, roomSet) => (
       
     
@@ -92,14 +92,14 @@ const JoinButton = ({callParentFunction} : props) => {
 
     <AlertDialogTrigger asChild>
         <Button key={roomId}>
-        Join {roomId}
+        Влез {roomId}
         </Button>
     </AlertDialogTrigger>
 
 
     <AlertDialogContent>
         <AlertDialogHeader>
-            <AlertDialogTitle className="pl-1">Choose your name</AlertDialogTitle>
+            <AlertDialogTitle className="pl-1">Напиши име</AlertDialogTitle>
                 <AlertDialogDescription className="pt-1">
                 <Input type="text" placeholder="Write your name here" onChange={handleInputChange}/>
                 </AlertDialogDescription>
@@ -107,8 +107,8 @@ const JoinButton = ({callParentFunction} : props) => {
 
 
     <AlertDialogFooter>
-        <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction disabled={HasLength()} onClick={() => {SetName(); JoinRoom(roomId)}}>Continue</AlertDialogAction>
+        <AlertDialogCancel>Отказ</AlertDialogCancel>
+            <AlertDialogAction disabled={HasLength()} onClick={() => {SetName(); JoinRoom(roomId)}}>Създай</AlertDialogAction>
     </AlertDialogFooter>
 
 

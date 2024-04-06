@@ -83,29 +83,29 @@ const CreateButton = ({socket, callParentFunction} : props) => {
   return (
     <AlertDialog onOpenChange={defaultValue}>
           <AlertDialogTrigger asChild>
-          <Button className="hover:scale-105 transform transition duration-200" style={{margin:'2rem', minWidth:'fit-content', fontSize:'3rem', padding:'1em'}}>Create a lobby</Button>
+          <Button className="hover:scale-105 transform transition duration-200" style={{margin:'2rem', minWidth:'fit-content', fontSize:'3rem', padding:'1em'}}>Създай игра</Button>
           
 
           </AlertDialogTrigger>
 
           <AlertDialogContent>
     <AlertDialogHeader>
-      <AlertDialogTitle className="pl-1">Choose your name</AlertDialogTitle>
+      <AlertDialogTitle className="pl-1">Напиши име</AlertDialogTitle>
       <AlertDialogDescription className="pt-1">
         <Input 
           defaultValue='test'
           ref={inputref} 
           type="text" 
-          placeholder="Write your name here" 
+          placeholder="Напиши си името тук..." 
           onChange={handleInputChange}
           onFocus={defaultValue}/>
       </AlertDialogDescription>
     </AlertDialogHeader>
     <AlertDialogFooter>
-      <AlertDialogCancel>Cancel</AlertDialogCancel>
+      <AlertDialogCancel>Отказ</AlertDialogCancel>
       <AlertDialogAction 
       disabled={HasLengthButton()}
-       onClick={() => {SetName(); setShowCreate(true)}}>Continue</AlertDialogAction>
+       onClick={() => {SetName(); setShowCreate(true)}}>Създай</AlertDialogAction>
     </AlertDialogFooter>
   </AlertDialogContent>
         </AlertDialog>

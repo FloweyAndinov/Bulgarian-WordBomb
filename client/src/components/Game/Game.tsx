@@ -314,7 +314,7 @@ function Game({isOwner, roomIDProp, socket, clearGame} : Props) {
         <div className='' key={player} style={{display:'flex', flexDirection:'column', ...playerStyle(index)}}>
           <Avatar className='mx-auto my-2' style={{width : '4em', height:'auto'}}>
             <AvatarImage src={avatarLinks.get(avatarsMap.get(player) || 1)} style={{pointerEvents:'none'}}/>
-            <AvatarFallback>CN</AvatarFallback>
+            <AvatarFallback>{player[0].toUpperCase()}</AvatarFallback>
           </Avatar>
           <span className='mx-auto text-2xl'>{player}</span>
         </div>
@@ -329,14 +329,14 @@ function Game({isOwner, roomIDProp, socket, clearGame} : Props) {
      
     {gameStarted ? 
       <div className='flex flex-col' style={{position:'relative', width:'max-content', height:'100px', bottom:'-20em', justifyContent:'center', left:'50%', transform:'translateX(-50%)', marginBottom : '25em'}}>
-        <span style={{width: 'max-content', fontSize:'1.5em'}}>Write a word that cointains</span>
+        <span style={{width: 'max-content', fontSize:'1.5em'}}>Напиши дума която съдържа</span>
         <br />
         <span style={{fontSize:'1.5em', color:'red', textAlign:'center'}}>{word}</span>
         {gameStarted ? <WordSection socket={socket} enabled={playType} word={word} playerword={playerWord} roomIDProp={roomID} /> : null}
       </div>
        :
        <div className='flex flex-col' style={{position:'relative', width:'max-content', height:'100px', top:'-20em', justifyContent:'center', left:'50%', transform:'translateX(-50%)'}}>
-        <span style={{width: 'max-content', fontSize:'1.5em'}}>Waiting for host to start game</span>
+        <span style={{width: 'max-content', fontSize:'1.5em'}}>Изчакай да започне играта</span>
         </div>
         }
     
@@ -345,7 +345,7 @@ function Game({isOwner, roomIDProp, socket, clearGame} : Props) {
       
       </div>
       <div style={{ display : 'flex' , position:'relative', bottom:'-15em', justifyContent:'center', width:'100vw'}}>
-          {ownership && !gameStarted? <Button style={{fontSize:'1.5em', padding:'1em'}} disabled={playerList.length <= 1 ? true : false} onClick={createGame}>Start Game</Button> : null}
+          {ownership && !gameStarted? <Button style={{fontSize:'1.5em', padding:'1em'}} disabled={playerList.length <= 1 ? true : false} onClick={createGame}>Започни игра</Button> : null}
       </div>
       <Toaster/>
     </>

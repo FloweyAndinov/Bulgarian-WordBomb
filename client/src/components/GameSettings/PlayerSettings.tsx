@@ -83,7 +83,7 @@ const PlayerSettings = ({roomID} : props) => {
 
   <SheetContent>
   <SheetHeader>
-    <SheetTitle style={{textAlign:'center', marginBottom:'1rem'}}>Player controls</SheetTitle>
+    <SheetTitle style={{textAlign:'center', marginBottom:'1rem'}}>Покани приятели</SheetTitle>
     <SheetDescription >
     <span>Player settings</span>
     <Accordion type="single" collapsible>
@@ -92,7 +92,7 @@ const PlayerSettings = ({roomID} : props) => {
           <AccordionTrigger onClick={play}>Invite players</AccordionTrigger>
           <AccordionContent>
             <div className="flex flex-row my-2 " style={{marginLeft:'-1rem'}}>
-            <Input readOnly ref={inputRef} defaultValue={streamerMode? 'click to copy' :invitelink} style={{marginLeft:'1rem'}} onClick={handleFocus} />
+            <Input readOnly ref={inputRef} defaultValue={streamerMode? 'Натисни за копиране' :invitelink} style={{marginLeft:'1rem'}} onClick={handleFocus} />
               <Button variant='link' onClick={() => {navigator.clipboard.writeText(invitelink); toast(copyMessage)}}>
                 
               <Copy style={{color:'white'}}/>
@@ -104,7 +104,7 @@ const PlayerSettings = ({roomID} : props) => {
 
 
         <AccordionItem value="item-2">
-          <AccordionTrigger onClick={play}>player icon</AccordionTrigger>
+          <AccordionTrigger onClick={play}>Иконки</AccordionTrigger>
           <AccordionContent>
           <ProfileIcons roomID={roomID}/>
           </AccordionContent>
@@ -112,7 +112,7 @@ const PlayerSettings = ({roomID} : props) => {
 
     
      <AccordionItem value="item-3">
-            <AccordionTrigger onClick={play}>players list</AccordionTrigger>
+            <AccordionTrigger onClick={play}>Списък на играчи</AccordionTrigger>
             <AccordionContent>
             {playerList ? playerList.map((player) => 
               <div className="my-3 flex flex-row justify-between">
@@ -122,15 +122,15 @@ const PlayerSettings = ({roomID} : props) => {
         </AccordionItem>
 
         <AccordionItem value="item-4">
-            <AccordionTrigger onClick={play}>Streamer mode</AccordionTrigger>
+            <AccordionTrigger onClick={play}>Streamer режим</AccordionTrigger>
             <AccordionContent>
             <div className="flex flex-row justify-between my-3">
               {streamerMode ? 
   <TooltipProvider>
     <Tooltip>
-          <TooltipTrigger style={{borderBottom : '2px dotted grey'}}>You're in streamer mode</TooltipTrigger>
+          <TooltipTrigger style={{borderBottom : '2px dotted grey'}}>Ти си в streamer режим</TooltipTrigger>
     <TooltipContent>
-          <p>Streamer mode allows you to hide sensitive information</p>
+          <p>Streamer режим ти позволява да скриеш важна информация</p>
     </TooltipContent>
   </Tooltip>
 </TooltipProvider>
@@ -138,9 +138,9 @@ const PlayerSettings = ({roomID} : props) => {
 : 
 <TooltipProvider>
 <Tooltip>
-      <TooltipTrigger style={{borderBottom : '2px dotted grey'}}>You're in casual mode</TooltipTrigger>
+      <TooltipTrigger style={{borderBottom : '2px dotted grey'}}>Ти си в нормарен режим</TooltipTrigger>
 <TooltipContent>
-      <p>Streamer mode allows you to hide sensitive information</p>
+      <p>Streamer режим ти позволява да скриеш важна информация</p>
 </TooltipContent>
 </Tooltip>
 </TooltipProvider>}

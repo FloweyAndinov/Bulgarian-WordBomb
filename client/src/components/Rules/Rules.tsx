@@ -17,7 +17,7 @@ const Rules = () => {
   </DialogTrigger>
   <DialogContent>
     <DialogHeader>
-      <DialogTitle>Rules</DialogTitle>
+      <DialogTitle>Правила</DialogTitle>
       <DialogDescription>
         The player with the bomb is given a syllable. <br/>That player has to enter a word that contains the syllable.
       </DialogDescription>
