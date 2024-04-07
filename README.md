@@ -31,6 +31,11 @@ npm i
 npm run dev
 ```
 
+<li>visit at </li>
+
+[localhost:5173](http://localhost:5173)
+
+
 </ul>
 
 I will revisit this readme when i host the app for everyone
