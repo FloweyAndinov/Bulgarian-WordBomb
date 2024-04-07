@@ -51,7 +51,6 @@ function Home( {socket}: Props) {
         socket.on('connect', () => {
             
             if (query?.trim()!=null) {
-                console.log("query is not null!!")
                 socket.emit('join-room-window', query);
             }
         });

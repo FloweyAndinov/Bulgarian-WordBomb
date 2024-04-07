@@ -102,7 +102,7 @@ function Game({isOwner, roomIDProp, socket, clearGame} : Props) {
       }, 1000)
     
     let id = socket.id.slice(-6)
-    console.log(id, "is the user id")
+    // console.log(id, "is the user id")
     if (isOwner) {
         setRoomID(id);
         // console.log("owner created room")
@@ -132,7 +132,7 @@ function Game({isOwner, roomIDProp, socket, clearGame} : Props) {
       setGameStarted(true)
       setPlayType(false)
       setWord(serverWord)
-      console.log(playerAngle)
+      // console.log(playerAngle)
       setArrowAngle(playerAngle)
       if (playerAngle == 0) {
         setAngleMultiplier(prev => prev + 1)
@@ -223,12 +223,12 @@ function Game({isOwner, roomIDProp, socket, clearGame} : Props) {
     const avatarsInterval = setInterval(() => {
         socket.emit('request-avatars', (roomID))
         clearInterval(avatarsInterval)
-        console.log("requested avatars")
+        // console.log("requested avatars")
       
     }, 500)
   }
   else {
-    console.log("waiting for avatars")
+    // console.log("waiting for avatars")
   }
  }, [roomID])
 

@@ -39,11 +39,11 @@ const JoinButton = ({callParentFunction} : props) => {
     useEffect(() => {
         socket.emit('get-rooms');
         socket.on('rooms', (roomsMap) => {
-          console.log(roomsMap);
+          // console.log(roomsMap);
           setRooms(roomsMap);
           });
         counter.current++;
-        console.log(counter.current);
+        // console.log(counter.current);
        
         }, []);
 
