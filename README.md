@@ -1,6 +1,6 @@
 <h1 align="center"> Bulgarian Wordbomb </h1>
 
-><h2> Can you name a word <strong>before the time is up  </strong></h2>
+><h2> Can you name a word **before the time is up** </h2>
 
 <h4> Enjoy this simple text game with friends. Max of 8 players in a single room.</h4>
 
@@ -32,3 +32,5 @@ npm run dev
 ```
 
 </ul>
+
+I will revisit this readme when i host the app for everyone
