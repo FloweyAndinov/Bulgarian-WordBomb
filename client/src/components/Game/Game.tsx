@@ -56,6 +56,7 @@ function Game({isOwner, roomIDProp, socket, clearGame} : Props) {
   const [angleMultiplier, setAngleMultiplier] = useState(0)
   const [avatarsMap, setAvatarsMap] = useState(new Map<string, number>())
   const [userID , setUserID] = useState("")
+  const [intialised, setInitialised] = useState(false)
   
 
   bombclockSfx.preload = 'metadata'
@@ -153,7 +154,7 @@ function Game({isOwner, roomIDProp, socket, clearGame} : Props) {
         // console.log('recieved players')
     })
 
-    socket.emit('request-avatars', (roomID))
+    
 
     socket.on('send-lobby', () => {
       clearInterval(checkId)
@@ -182,8 +183,6 @@ function Game({isOwner, roomIDProp, socket, clearGame} : Props) {
         localavatarsMap.set(key[0], key[1])
       })
       setAvatarsMap(localavatarsMap)
-      console.log(avatarsMap)
-      console.log(localavatarsMap)
     })
 
     socket.on('ownership-confirmed', () => {
@@ -217,6 +216,21 @@ function Game({isOwner, roomIDProp, socket, clearGame} : Props) {
     
     
   }, [])
+
+ useEffect(() => {
+  if (!intialised && roomID.length === 6) {
+    setInitialised(true)
+    const avatarsInterval = setInterval(() => {
+        socket.emit('request-avatars', (roomID))
+        clearInterval(avatarsInterval)
+        console.log("requested avatars")
+      
+    }, 500)
+  }
+  else {
+    console.log("waiting for avatars")
+  }
+ }, [roomID])
 
   
 
