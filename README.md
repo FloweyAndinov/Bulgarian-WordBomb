@@ -1,6 +1,6 @@
 <h1 align="center"> Bulgarian Wordbomb </h1>
 
-><h2> Can you name a word **before the time is up** </h2>
+> ## Can you name a word <ins>before the time is up</ins>
 
 <h4> Enjoy this simple text game with friends. Max of 8 players in a single room.</h4>
 
