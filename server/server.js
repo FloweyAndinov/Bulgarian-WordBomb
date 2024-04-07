@@ -343,8 +343,9 @@ io.on('connection', (socket) => {
         }
     })
 
-    socket.on('request-avatar', (roomID) => {
+    socket.on('request-avatars', (roomID) => {
         const room = io.sockets.adapter.rooms.get(roomID);
+        if (room) {
         const ids = Array.from(room);
         let localavatarsMap = new Map()
         ids.forEach ((id) => {
@@ -354,6 +355,7 @@ io.on('connection', (socket) => {
         })
         console.log(localavatarsMap)
         io.to(roomID).emit('recieve-avatars', Object.fromEntries(localavatarsMap))
+        }
     })
 
     socket.on('set-avatar', (url, roomID) => {
