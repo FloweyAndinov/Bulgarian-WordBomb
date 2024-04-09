@@ -38,4 +38,4 @@ npm run dev
 
 </ul>
 
-I will revisit this readme when i host the app for everyone
+I will revisit this readme when i deploy the app.
